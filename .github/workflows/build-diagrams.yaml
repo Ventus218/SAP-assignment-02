@@ -17,5 +17,5 @@ jobs:
       - name: Build diagrams
         uses: Timmy/plantuml-action@v1
         with:
-          args: '/docs/diagrams/src/*.puml -o /docs/diagrams'
+          args: '-v -o .. doc/diagrams/src'
       - uses: stefanzweifel/git-auto-commit-action@v5 # commiting if something changed
