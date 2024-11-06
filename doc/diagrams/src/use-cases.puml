@@ -7,15 +7,13 @@ left to right direction
 
 rectangle "EBike App" {
     User --> (Go on a ride)
-    (Go on a ride) .d.> (End a ride) : includes
-    (Go on a ride) .d.> (Start a ride) : includes
     User --> (Recharge credit)
     User --> (Check credit)
 
-    Admin --> (Monitor bike positions)
-    Admin --> (Monitor rides)
-    Admin --> (See registered users\n and their credit)
-    Admin --> (Add new bike)
+    Admin -u-> (Monitor bike positions)
+    Admin -u-> (Monitor rides)
+    Admin -u-> (See registered users\n and their credit)
+    Admin -u-> (Add new bike)
 }
 
 @enduml

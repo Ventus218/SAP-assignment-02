@@ -27,12 +27,16 @@
 #### Scenarios
 
 - Go on a ride:
-    1. Start a ride
-        1. The user choses an available bike
-    2. End a ride
+    1. The user chooses an available bike and selects "Start ride"
+    1. The user can see his credits updating while he's riding
+    1. The user selects "End ride"
 
+- Check credit:
+    1. The user sees his credit right in the home screen
 
+- Recharge credit:
+    1. The user selects a "recharge credit" button
+    1. The user inserts how much credits he wants to deposit
+    1. The user confirms
 
-
-
-
+<!-- TODO: where are things like login / credit deduction -->
