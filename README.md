@@ -39,4 +39,20 @@
     1. The user inserts how much credits he wants to deposit
     1. The user confirms
 
-<!-- TODO: where are things like login / credit deduction -->
+- Add new bike:
+    1. The system administrator chooses an id for the new bike and confirms
+    1. The system checks that the id is valid, and if it's not it fails the operation
+    1. The system register the new bike with the given valid id
+
+- See registered users and their credit:
+    1. The system administrator interface shows always every registered user alongside his credit
+
+- Monitor rides
+    1. The system administrator interface shows user usernames that are on a ride alongside the bike their riding
+
+- Monitor bike positons
+    1. The system administrator interface shows a graphical representation of the bike positions on a 2D space
+
+### Business requirements
+- The credit of the user must be decreased by 1 unit every second
+
