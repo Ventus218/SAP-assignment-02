@@ -6,6 +6,7 @@ jobs:
   build-diagrams:
     name: Build diagrams
     runs-on: ubuntu-latest
+
     permissions:
       # Give the default GITHUB_TOKEN write permission to commit and push the
       # added or changed files to the repository.
@@ -14,8 +15,10 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+      - name: Install graphviz
+        run: sudo apt install graphviz
       - name: Build diagrams
-        uses: Timmy/plantuml-action@v1
-        with:
-          args: '-v -o .. doc/diagrams/src'
+        run: java -jar plantuml-1.2024.7.jar -v -o .. doc/diagrams/src
       - uses: stefanzweifel/git-auto-commit-action@v5 # commiting if something changed
+        with:
+          commit_message: "Automatically generated PlantUML diagrams"
