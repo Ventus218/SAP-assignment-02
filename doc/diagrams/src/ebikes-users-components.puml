@@ -1,0 +1,27 @@
+@startuml ebikes / users components diagram
+
+title "EBikes / Users microservice"
+
+left to right direction
+
+component "DB"
+interface "EBikes / Users API" as EBikesAPI
+
+hexagon Adapters {
+    hexagon Domain as DomainHex {
+        component Domain {
+            portout "Repository\n<EBikes / Users>" as Repo
+
+        }
+    }
+
+    component "Repository Adapter" as RepoAdapter
+    RepoAdapter -u-|> Repo
+    RepoAdapter -l-> DB
+
+    component "HTTPPresentationAdapter" as HTTPAdapter
+    HTTPAdapter -d-> Domain : uses
+    HTTPAdapter -l-() EBikesAPI
+}
+
+@enduml

@@ -59,3 +59,7 @@
 ## Design
 
 ![Components diagram](./doc/diagrams/components.png)
+
+### EBikes microservice
+
+![EBikes microservice components diagram](./doc/diagrams/ebikes-users-components.png)
