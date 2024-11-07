@@ -56,3 +56,6 @@
 ### Business requirements
 - The credit of the user must be decreased by 1 unit every second
 
+## Design
+
+![Components diagram](./doc/diagrams/components.png)

@@ -1,0 +1,33 @@
+@startuml components
+
+left to right direction
+
+component "User frontend" as UserFE <<Client>>
+component "Admin frontend" as AdminFE <<Client>>
+
+rectangle Backend {
+    component "API Gateway" as APIGateway
+
+    component "EBikes" as EBikes <<Microservice>>
+    interface "EBikes API" as EBikesAPI
+    APIGateway --( EBikesAPI
+    EBikes -u-() EBikesAPI
+
+    component "Users" as Users <<Microservice>>
+    interface "Users API" as UsersAPI
+    APIGateway --( UsersAPI
+    Users -u-() UsersAPI
+
+    component "Rides" as Rides <<Microservice>>
+    interface "Rides API" as RidesAPI
+    APIGateway --( RidesAPI
+    Rides -u-() RidesAPI
+    Rides --( UsersAPI
+    Rides --( EBikesAPI
+}
+
+APIGateway -u-() "API Gateway API"
+UserFE --( "API Gateway API"
+AdminFE --( "API Gateway API"
+
+@enduml
