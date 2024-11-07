@@ -6,7 +6,13 @@ jobs:
   build-diagrams:
     name: Build diagrams
     runs-on: ubuntu-latest
-    container: plantuml/plantuml:1.2024
+
+    services:
+      docker:
+        image: docker:dind
+        options: --privileged
+        ports:
+          - 2375:2375
 
     permissions:
       # Give the default GITHUB_TOKEN write permission to commit and push the
@@ -16,6 +22,10 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+      - name: Install Docker
+        run: |
+          apt-get update
+          apt-get install -y docker.io
       - name: Build diagrams
-        run: 'java -jar /opt/plantuml.jar -v -o .. doc/diagrams/src'
+        run: 'docker run -v $(pwd):/data plantuml/plantuml:1.2024 -v -o .. /data/doc/diagrams/src'
       - uses: stefanzweifel/git-auto-commit-action@v5 # commiting if something changed
