@@ -6,6 +6,8 @@ jobs:
   build-diagrams:
     name: Build diagrams
     runs-on: ubuntu-latest
+    container: plantuml/plantuml:1.2024
+
     permissions:
       # Give the default GITHUB_TOKEN write permission to commit and push the
       # added or changed files to the repository.
@@ -15,7 +17,5 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
       - name: Build diagrams
-        uses: Timmy/plantuml-action@v1
-        with:
-          args: '-v -o .. doc/diagrams/src'
+        run: 'java -jar /opt/plantuml.jar -v -o .. doc/diagrams/src'
       - uses: stefanzweifel/git-auto-commit-action@v5 # commiting if something changed
