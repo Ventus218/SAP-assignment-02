@@ -9,7 +9,8 @@ jobs:
     services:
       graphviz: 
         image: plantuml/plantuml-server # just for latest update of graphviz
-        options: --name plantuml-server
+        options: '-v $(pwd):/data'
+
 
 
     permissions:
@@ -21,9 +22,7 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
       - name: Test docker
-        run: docker -v
-      - name: Creating dot alias
-        run: alias dot="docker exec plantuml-server dot" && dot -v
+        run: docker exec plantuml-server ls /data
       - name: Build diagrams
         run: java -jar plantuml-1.2024.7.jar -v -o .. doc/diagrams/src
       - uses: stefanzweifel/git-auto-commit-action@v5 # commiting if something changed
