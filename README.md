@@ -68,3 +68,10 @@ The EBikes microservice and the Users microservice are both built follwing the h
 
 They don't depend on any other microservice.
 
+### Rides microservice
+
+![Rides microservice components diagram](./doc/diagrams/rides-components.png)
+
+The Rides microservice is built follwing the hexagonal architecture.
+
+It depends on both the other microservices (EBikes and Users).
