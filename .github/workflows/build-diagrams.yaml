@@ -6,7 +6,9 @@ jobs:
   build-diagrams:
     name: Build diagrams
     runs-on: ubuntu-latest
-    container:  plantuml/plantuml-server # just for latest update of graphviz
+    container:
+      image: plantuml/plantuml-server # just for latest update of graphviz
+      options: --user root
 
     permissions:
       # Give the default GITHUB_TOKEN write permission to commit and push the
