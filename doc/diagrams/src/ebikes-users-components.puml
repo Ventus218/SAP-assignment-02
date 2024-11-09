@@ -1,4 +1,4 @@
-@startuml ebikes and users components diagram
+@startuml ebikes-users-components
 
 title "EBikes / Users microservice"
 

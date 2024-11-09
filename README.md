@@ -60,6 +60,11 @@
 
 ![Components diagram](./doc/diagrams/components.png)
 
-### EBikes microservice
+### EBikes and Users microservices
 
-![EBikes microservice components diagram](./doc/diagrams/ebikes-users-components.png)
+![EBikes and Users microservices components diagram](./doc/diagrams/ebikes-users-components.png)
+
+The EBikes microservice and the Users microservice are both built follwing the hexagonal architecture.
+
+They don't depend on any other microservice.
+
