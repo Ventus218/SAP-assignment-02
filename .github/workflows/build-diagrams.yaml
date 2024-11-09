@@ -24,7 +24,7 @@ jobs:
       - name: Copy to docker
         run: 'docker cp . plantuml-server:/repo'
       - name: Build diagrams
-        run: docker exec plantuml-server cd /data && java -jar plantuml-1.2024.7.jar -v -o .. doc/diagrams/src
+        run: docker exec --user root plantuml-server sh -c cd /data && java -jar plantuml-1.2024.7.jar -v -o .. doc/diagrams/src
       - name: Copy from docker
         run: 'docker cp plantuml-server:/repo .'
       - uses: stefanzweifel/git-auto-commit-action@v5 # commiting if something changed
