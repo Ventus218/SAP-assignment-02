@@ -6,6 +6,7 @@ jobs:
   build-diagrams:
     name: Build diagrams
     runs-on: ubuntu-latest
+    container:  plantuml/plantuml-server # just for latest update of graphviz
 
     permissions:
       # Give the default GITHUB_TOKEN write permission to commit and push the
@@ -15,19 +16,8 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
-      - name: Using Homebrew
-        run: |
-          eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
-          brew update
-      - name: Install graphviz (Using homebrew)
-        run: |
-          eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
-          brew install graphviz
-          dot -v
       - name: Build diagrams
-        run: |
-          eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
-          java -jar plantuml-1.2024.7.jar -v -o .. doc/diagrams/src
+        run: java -jar plantuml-1.2024.7.jar -v -o .. doc/diagrams/src
       - uses: stefanzweifel/git-auto-commit-action@v5 # commiting if something changed
         with:
           commit_message: "Automatically generated PlantUML diagrams"
