@@ -25,7 +25,9 @@ jobs:
           brew install graphviz
           dot -v
       - name: Build diagrams
-        run: java -jar plantuml-1.2024.7.jar -v -o .. doc/diagrams/src
+        run: |
+          eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
+          java -jar plantuml-1.2024.7.jar -v -o .. doc/diagrams/src
       - uses: stefanzweifel/git-auto-commit-action@v5 # commiting if something changed
         with:
           commit_message: "Automatically generated PlantUML diagrams"
