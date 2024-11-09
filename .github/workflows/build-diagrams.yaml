@@ -15,10 +15,10 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
-      - name: Install graphviz
+      - name: Install graphviz (Using homebrew)
         run: |
-          sudo apt update
-          sudo apt install graphviz
+          $(/home/linuxbrew/.linuxbrew/bin/brew shellenv) update
+          $(/home/linuxbrew/.linuxbrew/bin/brew shellenv) install graphviz
           dot -v
       - name: Build diagrams
         run: java -jar plantuml-1.2024.7.jar -v -o .. doc/diagrams/src
