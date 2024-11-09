@@ -21,6 +21,7 @@ jobs:
           brew update
       - name: Install graphviz (Using homebrew)
         run: |
+          eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
           brew install graphviz
           dot -v
       - name: Build diagrams
