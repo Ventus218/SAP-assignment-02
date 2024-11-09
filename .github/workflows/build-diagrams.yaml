@@ -20,11 +20,14 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+      - name: Test docker
+        run: docker -v
+      - name: Creating dot alias
+        run: alias dot="docker exec plantuml-server dot"
+      - name: Test dot
+        run: dot -v
       - name: Build diagrams
-        run: |
-          alias dot="docker exec plantuml-server dot"
-          dot -v
-          java -jar plantuml-1.2024.7.jar -v -o .. doc/diagrams/src
+        run: java -jar plantuml-1.2024.7.jar -v -o .. doc/diagrams/src
       - uses: stefanzweifel/git-auto-commit-action@v5 # commiting if something changed
         with:
           commit_message: "Automatically generated PlantUML diagrams"
