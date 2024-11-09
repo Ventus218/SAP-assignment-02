@@ -6,9 +6,11 @@ jobs:
   build-diagrams:
     name: Build diagrams
     runs-on: ubuntu-latest
-    container:
-      image: plantuml/plantuml-server # just for latest update of graphviz
-      options: --user root
+    services:
+      graphviz: 
+        image: plantuml/plantuml-server # just for latest update of graphviz
+        options: --name plantuml-server
+
 
     permissions:
       # Give the default GITHUB_TOKEN write permission to commit and push the
@@ -21,7 +23,9 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
       - name: Build diagrams
-        run: java -jar plantuml-1.2024.7.jar -v -o .. doc/diagrams/src
+        run: |
+          alias dot="docker exec plantuml-server dot"
+          java -jar plantuml-1.2024.7.jar -v -o .. doc/diagrams/src
       - uses: stefanzweifel/git-auto-commit-action@v5 # commiting if something changed
         with:
           commit_message: "Automatically generated PlantUML diagrams"
