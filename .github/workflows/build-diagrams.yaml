@@ -18,13 +18,12 @@ jobs:
       contents: write
 
     steps:
-      - name: Install git
-        run: apt update && apt install -y git
       - name: Check out repository
         uses: actions/checkout@v4
       - name: Build diagrams
         run: |
           alias dot="docker exec plantuml-server dot"
+          dot -v
           java -jar plantuml-1.2024.7.jar -v -o .. doc/diagrams/src
       - uses: stefanzweifel/git-auto-commit-action@v5 # commiting if something changed
         with:
