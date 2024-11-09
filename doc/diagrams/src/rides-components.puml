@@ -28,13 +28,13 @@ hexagon Adapters {
     EBikesAdapter -r-( EBikesAPI
     EBikesAdapter -u-|> EBikesService
 
-    component "HTTPPresentationAdapter" as HTTPAdapter
-    HTTPAdapter -l-() RidesAPI
-    HTTPAdapter -d-> Presentation
-
     component UsersAdapter
     UsersAdapter -r-( UsersAPI
     UsersAdapter -d-|> UsersService
+
+    component "HTTPPresentationAdapter" as HTTPAdapter
+    HTTPAdapter -l-() RidesAPI
+    HTTPAdapter -d-> Presentation
 }
 
 component "EBikes" as EBikes <<Microservice>>
