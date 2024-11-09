@@ -10,8 +10,6 @@ jobs:
       graphviz: 
         image: plantuml/plantuml-server # just for latest update of graphviz
         options: --name plantuml-server
-        volumes:
-          - /github/workspace:/data
 
 
 
@@ -23,14 +21,12 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
-      - name: Test pwd
-        run: pwd
-      - name: Test pwd ls
-        run: ls $(pwd)
-      - name: Test workspace
-        run: ls /github/workspace
+      - name: Copy to docker
+        run: 'docker cp . plantuml-server:/repo'
       - name: Build diagrams
-        run: docker exec plantuml-server java -jar /data/plantuml-1.2024.7.jar -v -o .. doc/diagrams/src
+        run: docker exec plantuml-server cd /data && java -jar plantuml-1.2024.7.jar -v -o .. doc/diagrams/src
+      - name: Copy from docker
+        run: 'docker cp plantuml-server:/repo .'
       - uses: stefanzweifel/git-auto-commit-action@v5 # commiting if something changed
         with:
           commit_message: "Automatically generated PlantUML diagrams"
