@@ -6,7 +6,6 @@ jobs:
   build-diagrams:
     name: Build diagrams
     runs-on: ubuntu-latest
-    container: plantuml/plantuml
 
     permissions:
       # Give the default GITHUB_TOKEN write permission to commit and push the
@@ -17,5 +16,5 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
       - name: Build diagrams
-        run: 'java -jar /opt/plantuml.jar -v -o .. doc/diagrams/src'
+        run: 'docker run -v $(pwd):/data plantuml/plantuml -v -o .. /data/doc/diagrams/src'
       - uses: stefanzweifel/git-auto-commit-action@v5 # commiting if something changed
