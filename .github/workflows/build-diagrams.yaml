@@ -10,7 +10,7 @@ jobs:
       graphviz: 
         image: plantuml/plantuml-server # just for latest update of graphviz
         volumes:
-          - "${GITHUB_WORKSPACE}:/data"
+          - /github/workspace:/data
 
 
 
