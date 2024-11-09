@@ -17,7 +17,7 @@ jobs:
 
     steps:
       - name: Install git
-        run: apt update && apt install git
+        run: apt update && apt install -y git
       - name: Check out repository
         uses: actions/checkout@v4
       - name: Build diagrams
