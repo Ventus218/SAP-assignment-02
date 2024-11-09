@@ -9,6 +9,7 @@ jobs:
     services:
       graphviz: 
         image: plantuml/plantuml-server # just for latest update of graphviz
+        options: --name plantuml-server
         volumes:
           - /github/workspace:/data
 
