@@ -23,9 +23,7 @@ jobs:
       - name: Test docker
         run: docker -v
       - name: Creating dot alias
-        run: alias dot="docker exec plantuml-server dot"
-      - name: Test dot
-        run: dot -v
+        run: alias dot="docker exec plantuml-server dot" && dot -v
       - name: Build diagrams
         run: java -jar plantuml-1.2024.7.jar -v -o .. doc/diagrams/src
       - uses: stefanzweifel/git-auto-commit-action@v5 # commiting if something changed
