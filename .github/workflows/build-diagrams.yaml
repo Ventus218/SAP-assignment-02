@@ -9,7 +9,8 @@ jobs:
     services:
       graphviz: 
         image: plantuml/plantuml-server # just for latest update of graphviz
-        options: '-v $(pwd):/data'
+        volumes:
+          - "$(pwd):/data"
 
 
 
