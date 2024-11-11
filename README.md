@@ -58,15 +58,22 @@
 
 ## Design
 
+The system is designed follwing a microservice architecture.
+
 ![Components diagram](./doc/diagrams/components.png)
 
-### EBikes and Users microservices
+### API Gateway
+<!-- TODO -->
 
-![EBikes and Users microservices components diagram](./doc/diagrams/ebikes-users-components.png)
+### EBikes and Users microservices
 
 The EBikes microservice and the Users microservice are both built follwing the hexagonal architecture.
 
 They don't depend on any other microservice.
+
+![EBikes microservice components diagram](./doc/diagrams/ebikes-components.png)
+
+![Users microservice components diagram](./doc/diagrams/users-components.png)
 
 ### Rides microservice
 
@@ -75,3 +82,7 @@ They don't depend on any other microservice.
 The Rides microservice is built follwing the hexagonal architecture.
 
 It depends on both the other microservices (EBikes and Users).
+
+### Authentication Server
+
+The Authentication Server is responsible for generating JSON Web Tokens (JWT) and validating them.

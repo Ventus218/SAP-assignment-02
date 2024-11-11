@@ -5,8 +5,8 @@ left to right direction
 component "User frontend" as UserFE <<Client>>
 component "Admin frontend" as AdminFE <<Client>>
 
-rectangle Backend {
-    component "API Gateway" as APIGateway
+component Backend <<Server>> {
+    component "API Gateway" as APIGateway <<Microservice>>
 
     component "EBikes" as EBikes <<Microservice>>
     interface "EBikes API" as EBikesAPI
@@ -24,6 +24,15 @@ rectangle Backend {
     Rides -u-() RidesAPI
     Rides --( UsersAPI
     Rides --( EBikesAPI
+
+    component "Authentication Server" as AuthServer <<Microservice>>
+    interface "Authentication API" as AuthAPI
+    APIGateway -l-( AuthAPI
+    AuthServer --u-() AuthAPI
+
+    interface "User Authentication API" as UserAuthAPI
+    AuthServer ---( UserAuthAPI
+    Users -l-() UserAuthAPI
 }
 
 APIGateway -u-() "API Gateway API"

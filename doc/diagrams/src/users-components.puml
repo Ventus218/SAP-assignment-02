@@ -1,16 +1,16 @@
-@startuml ebikes-users-components
+@startuml Users-users-components
 
-title "EBikes / Users microservice"
+title "Users microservice"
 
 left to right direction
 
 component "DB"
-interface "EBikes / Users API" as EBikesAPI
+interface "Users API" as UsersAPI
 
 hexagon Adapters {
     hexagon Domain as DomainHex {
         component Domain {
-            portout "Repository\n<EBikes / Users>" as Repo
+            portout "Repository\n<Users>" as Repo
 
         }
     }
@@ -21,7 +21,7 @@ hexagon Adapters {
 
     component "HTTPPresentationAdapter" as HTTPAdapter
     HTTPAdapter -d-> Domain : uses
-    HTTPAdapter -l-() EBikesAPI
+    HTTPAdapter -l-() UsersAPI
 }
 
 @enduml
