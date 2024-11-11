@@ -63,7 +63,16 @@ The system is designed follwing a microservice architecture.
 ![Components diagram](./doc/diagrams/components.png)
 
 ### API Gateway
-<!-- TODO -->
+The API Gateway microservice is the only service exposed to the internet.
+
+It has the responsibility to relay the client requests to the appropriate services.
+
+#### A choice regarding security
+Given the fact that the API Gateway is the only exposed access point it will be resposible for validating (through the Authentication Server) every request before relaying it.
+
+This allows to keep the token validation logic centralized letting every other microservice assume that the requests they receive are authenticated.
+
+This is by far not a much secure solution but for the purpose of this project it allows to reduce overall complexity.
 
 ### EBikes and Users microservices
 

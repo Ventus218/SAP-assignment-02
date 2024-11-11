@@ -8,31 +8,33 @@ component "Admin frontend" as AdminFE <<Client>>
 component Backend <<Server>> {
     component "API Gateway" as APIGateway <<Microservice>>
 
-    component "EBikes" as EBikes <<Microservice>>
-    interface "EBikes API" as EBikesAPI
-    APIGateway --( EBikesAPI
-    EBikes -u-() EBikesAPI
+    rectangle "Private Network" {
+        component "EBikes" as EBikes <<Microservice>>
+        interface "EBikes API" as EBikesAPI
+        APIGateway --( EBikesAPI
+        EBikes -u-() EBikesAPI
 
-    component "Users" as Users <<Microservice>>
-    interface "Users API" as UsersAPI
-    APIGateway --( UsersAPI
-    Users -u-() UsersAPI
+        component "Users" as Users <<Microservice>>
+        interface "Users API" as UsersAPI
+        APIGateway --( UsersAPI
+        Users -u-() UsersAPI
+        Users -u-() UserAuthAPI
 
-    component "Rides" as Rides <<Microservice>>
-    interface "Rides API" as RidesAPI
-    APIGateway --( RidesAPI
-    Rides -u-() RidesAPI
-    Rides --( UsersAPI
-    Rides --( EBikesAPI
+        component "Rides" as Rides <<Microservice>>
+        interface "Rides API" as RidesAPI
+        APIGateway --( RidesAPI
+        Rides -u-() RidesAPI
+        Rides --( UsersAPI
+        Rides --( EBikesAPI
 
-    component "Authentication Server" as AuthServer <<Microservice>>
-    interface "Authentication API" as AuthAPI
-    APIGateway -l-( AuthAPI
-    AuthServer --u-() AuthAPI
+        component "Authentication Server" as AuthServer <<Microservice>>
+        interface "Authentication API" as AuthAPI
+        APIGateway --( AuthAPI
+        AuthServer -u-() AuthAPI
 
-    interface "User Authentication API" as UserAuthAPI
-    AuthServer ---( UserAuthAPI
-    Users -l-() UserAuthAPI
+        interface "Users Authentication API" as UserAuthAPI
+        AuthServer --( UserAuthAPI
+    }
 }
 
 APIGateway -u-() "API Gateway API"
