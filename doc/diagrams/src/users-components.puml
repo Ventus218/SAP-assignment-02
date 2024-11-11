@@ -1,4 +1,4 @@
-@startuml Users-users-components
+@startuml users-components
 
 title "Users microservice"
 
@@ -6,6 +6,7 @@ left to right direction
 
 component "DB"
 interface "Users API" as UsersAPI
+interface "Users Authentication API" as UsersAuthAPI
 
 hexagon Adapters {
     hexagon Domain as DomainHex {
@@ -21,7 +22,10 @@ hexagon Adapters {
 
     component "HTTPPresentationAdapter" as HTTPAdapter
     HTTPAdapter -d-> Domain : uses
-    HTTPAdapter -l-() UsersAPI
+    HTTPAdapter -() UsersAPI
+    HTTPAdapter -() UsersAuthAPI
+    ' just for layout
+    UsersAPI -[hidden]-> UsersAuthAPI
 }
 
 @enduml
