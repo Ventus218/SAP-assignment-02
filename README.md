@@ -102,6 +102,10 @@ Given the requirements multiple bounded contexts were identified:
 |Monitor ebikes/rides|Admin's capability to check the location of each bike and which users are riding them||
 |Authentication|Process by which the user provides enough data to the system to identify him|Login|
 
+### Domain model
+
+![Domain model](./doc/diagrams/domain-model.png)
+
 ## Design
 
 The system is designed follwing a microservice architecture.
