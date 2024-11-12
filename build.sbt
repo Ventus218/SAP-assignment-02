@@ -1,64 +1,62 @@
-val scala3Version = "3.5.2"
+ThisBuild / scalaVersion := "3.5.2"
 
-lazy val userFrontend = project
-  .in(file("./UserFrontend"))
-  .settings(
-    name := "UserFrontend",
-    version := "0.1.0-SNAPSHOT",
-    scalaVersion := scala3Version,
-    libraryDependencies += "org.scalameta" %% "munit" % "1.0.0" % Test
-  )
+// lazy val userFrontend = project
+//   .in(file("UserFrontend"))
+//   .settings(
+//     name := "User Frontend",
+//     version := "0.1.0",
+//     libraryDependencies += "org.scalameta" %% "munit" % "1.0.0" % Test
+//   )
 
-lazy val adminFrontend = project
-  .in(file("./AdminFrontend"))
-  .settings(
-    name := "AdminFrontend",
-    version := "0.1.0-SNAPSHOT",
-    scalaVersion := scala3Version,
-    libraryDependencies += "org.scalameta" %% "munit" % "1.0.0" % Test
-  )
+// lazy val adminFrontend = project
+//   .in(file("AdminFrontend"))
+//   .settings(
+//     name := "Admin Frontend",
+//     version := "0.1.0",
+//     libraryDependencies += "org.scalameta" %% "munit" % "1.0.0" % Test
+//   )
 
 lazy val apiGateway = project
-  .in(file("./ApiGateway"))
+  .in(file("ApiGateway"))
   .settings(
-    name := "ApiGateway",
-    version := "0.1.0-SNAPSHOT",
-    scalaVersion := scala3Version,
-    libraryDependencies += "org.scalameta" %% "munit" % "1.0.0" % Test
+    name := "API Gateway",
+    version := "0.1.0",
+    libraryDependencies += "org.scalameta" %% "munit" % "1.0.0" % Test,
+    assembly / assemblyOutputPath := file("./ApiGateway/executable.jar")
   )
 
 lazy val authenticationServer = project
-  .in(file("./AuthenticationServer"))
+  .in(file("AuthenticationServer"))
   .settings(
-    name := "AuthenticationServer",
-    version := "0.1.0-SNAPSHOT",
-    scalaVersion := scala3Version,
-    libraryDependencies += "org.scalameta" %% "munit" % "1.0.0" % Test
+    name := "Authentication Server",
+    version := "0.1.0",
+    libraryDependencies += "org.scalameta" %% "munit" % "1.0.0" % Test,
+    assembly / assemblyOutputPath := file("./AuthenticationServer/executable.jar")
   )
 
 lazy val rides = project
-  .in(file("./Rides"))
+  .in(file("Rides"))
   .settings(
     name := "Rides",
-    version := "0.1.0-SNAPSHOT",
-    scalaVersion := scala3Version,
-    libraryDependencies += "org.scalameta" %% "munit" % "1.0.0" % Test
+    version := "0.1.0",
+    libraryDependencies += "org.scalameta" %% "munit" % "1.0.0" % Test,
+    assembly / assemblyOutputPath := file("./Rides/executable.jar")
   )
 
 lazy val users = project
-  .in(file("./Users"))
+  .in(file("Users"))
   .settings(
     name := "Users",
-    version := "0.1.0-SNAPSHOT",
-    scalaVersion := scala3Version,
-    libraryDependencies += "org.scalameta" %% "munit" % "1.0.0" % Test
+    version := "0.1.0",
+    libraryDependencies += "org.scalameta" %% "munit" % "1.0.0" % Test,
+    assembly / assemblyOutputPath := file("./Users/executable.jar")
   )
 
 lazy val eBikes = project
-  .in(file("./EBikes"))
+  .in(file("EBikes"))
   .settings(
     name := "EBikes",
-    version := "0.1.0-SNAPSHOT",
-    scalaVersion := scala3Version,
-    libraryDependencies += "org.scalameta" %% "munit" % "1.0.0" % Test
+    version := "0.1.0",
+    libraryDependencies += "org.scalameta" %% "munit" % "1.0.0" % Test,
+    assembly / assemblyOutputPath := file("./EBikes/executable.jar")
   )

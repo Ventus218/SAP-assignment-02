@@ -1,0 +1,25 @@
+services:
+  api-gateway:
+    build:
+      args:
+        - executable=ApiGateway/executable.jar
+  authentication-server:
+    build:
+      args:
+        - executable=AuthenticationServer/executable.jar
+  ebikes:
+    build:
+      args:
+        - executable=EBikes/executable.jar
+  users:
+    build:
+      args:
+        - executable=Users/executable.jar
+  rides:
+    build:
+      args:
+        - executable=Rides/executable.jar
+
+networks:
+  private_network:
+    driver: bridge
