@@ -34,7 +34,7 @@ November 29, 2024 - 9:00 AM
 |user|go on a ride with a rented bike|leave it wherever i want|
 |user|check my credit|understand if it needs to be recharged|
 |user|recharge my credit|go on a ride|
-|system administrator|see the current position of every bike|check if was left too far|
+|system administrator|see the current location of every bike|check if was left too far|
 |system administrator|see which users are currently riding a bike|spot any anomaly if present|
 |system administrator|see all the registered users and their credit|spot any anomaly if present|
 |system administrator|add new bikes to the system|increase the number of bikes in the future|
@@ -70,7 +70,7 @@ November 29, 2024 - 9:00 AM
     1. The system administrator interface shows user usernames that are on a ride alongside the bike their riding
 
 - Monitor bike positons
-    1. The system administrator interface shows a graphical representation of the bike positions on a 2D space
+    1. The system administrator interface shows a graphical representation of the bike locations on a 2D space
 
 ### Business requirements
 - The credit of the user must be decreased by 1 unit every second
@@ -94,11 +94,12 @@ Given the requirements multiple bounded contexts were identified:
 |User|The actual app customer one which rents bikes to ride|Customer|
 |Admin|An employee of the organization whose responsibility is to monitor the system and to take actions to let the system work as expected|System administrator|
 |E-bike|An electric bike which can be rented by the users|Ebike, bike|
+|E-bike location|The geographical location of the bike|E-bike position|
 |Ride|The rental of a bike from a user which aims to use it to move from one place to another||
 |Credit|An internal currency that the users exchange with bikes rental time||
 |Recharge credit|Process executed by the user by which his credit is increased by the requested amount||
 |Register new ebike|An action taken by the admin which has the outcome of making the system aware of a new bike which can then be rented|Create new ebike|
-|Monitor eikes/rides|Admin's capability to check the position of each bike and which users are riding them||
+|Monitor ebikes/rides|Admin's capability to check the location of each bike and which users are riding them||
 |Authentication|Process by which the user provides enough data to the system to identify him|Login|
 
 ## Design
