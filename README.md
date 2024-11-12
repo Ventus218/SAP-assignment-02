@@ -75,6 +75,32 @@ November 29, 2024 - 9:00 AM
 ### Business requirements
 - The credit of the user must be decreased by 1 unit every second
 
+## Analisys
+
+### Bounded contexts
+Given the requirements multiple bounded contexts were identified:
+
+- System administrator interactions
+- User interactions
+- Users management
+- E-bikes management
+- Rides management
+- User authentication (emerged due to the need of storing users credit)
+
+### Ubiquitous language
+
+|Word|Definition|Synonyms|
+|----|----------|--------|
+|User|The actual app customer one which rents bikes to ride|Customer|
+|Admin|An employee of the organization whose responsibility is to monitor the system and to take actions to let the system work as expected|System administrator|
+|E-bike|An electric bike which can be rented by the users|Ebike, bike|
+|Ride|The rental of a bike from a user which aims to use it to move from one place to another||
+|Credit|An internal currency that the users exchange with bikes rental time||
+|Recharge credit|Process executed by the user by which his credit is increased by the requested amount||
+|Register new ebike|An action taken by the admin which has the outcome of making the system aware of a new bike which can then be rented|Create new ebike|
+|Monitor eikes/rides|Admin's capability to check the position of each bike and which users are riding them||
+|Authentication|Process by which the user provides enough data to the system to identify him|Login|
+
 ## Design
 
 The system is designed follwing a microservice architecture.
