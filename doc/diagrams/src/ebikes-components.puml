@@ -11,7 +11,7 @@ hexagon Adapters {
     hexagon Domain as DomainHex {
         component Domain {
             portout "EBikesRepository" as Repo
-
+            portin EBikesService
         }
     }
 
@@ -20,7 +20,7 @@ hexagon Adapters {
     RepoAdapter -l-> DB
 
     component "HTTPPresentationAdapter" as HTTPAdapter
-    HTTPAdapter -d-> Domain : uses
+    HTTPAdapter -d-> EBikesService
     HTTPAdapter -l-() EBikesAPI
 }
 
