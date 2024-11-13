@@ -92,6 +92,7 @@ Given the requirements multiple bounded contexts were identified:
 |Word|Definition|Synonyms|
 |----|----------|--------|
 |User|The actual app customer one which rents bikes to ride|Customer|
+|Username|A text chosen by the user which uniquely identifies him inside the system|User id|
 |Admin|An employee of the organization whose responsibility is to monitor the system and to take actions to let the system work as expected|System administrator|
 |E-bike|An electric bike which can be rented by the users|Ebike, bike|
 |E-bike location|The geographical location of the bike|E-bike position|
