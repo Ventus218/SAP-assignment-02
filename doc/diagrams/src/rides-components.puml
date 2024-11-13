@@ -13,7 +13,7 @@ hexagon Adapters {
     hexagon Domain as DomainHex {
         component Domain {
             'ports in or out are just used for layout purposes and do not have any semantic'
-            portout "Repository\n<Rides>" as Repo
+            portout "RidesRepository" as Repo
             portin Presentation
             portin UsersService
             portout EBikesService

@@ -11,7 +11,7 @@ interface "Users Authentication API" as UsersAuthAPI
 hexagon Adapters {
     hexagon Domain as DomainHex {
         component Domain {
-            portout "Repository\n<Users>" as Repo
+            portout "UsersRepository" as Repo
 
         }
     }
