@@ -1,0 +1,36 @@
+@startuml rides-microservice-domain-model
+
+title Rides microservice domain model
+
+class Ride {
+    eBikeId: EBikeId
+    username: UserId
+    start: DateTime
+    end: DateTime?
+}
+struct RideId {
+    value: String
+}
+Ride "1" -u-> "id 1" RideId
+
+class RidesRepository <<Repository>>
+RidesRepository o-l- Ride
+
+class UsersService <<Service>>
+class EBikesService <<Service>>
+
+class RidesService <<Service>> {
+    findRide(rideId: RideId): Ride?
+    getAllRides(): Collection<Ride>
+    getAllActiveRides(): Collection<Ride>
+    startRide(eBikeId: EBikeId, username: UserId): Ride
+    endRide(id: RideId)
+    availableEBikes(): Collection<EBikeId>
+}
+
+RidesService --> EBikesService : "uses"
+RidesService --> UsersService : "uses"
+RidesService --> RidesRepository : "uses"
+
+@enduml
+

@@ -1,0 +1,26 @@
+@startuml ebikes-microservice-domain-model
+
+title EBikes microservice domain model
+
+class EBike {
+    location: P2d
+    direction: V2d
+    speed: Double
+}
+struct EBikeId {
+    value: String
+}
+EBike "1" -u-> "id 1" EBikeId
+
+class EBikesRepository <<Repository>> 
+EBikesRepository o-l- EBike
+
+class EBikesService <<Service>> {
+    find(eBikeId: EBikeId): EBike?
+    getAll(): Collection<EBike>
+    register(eBikeId: EBikeId, location: P2d): EBike
+}
+
+EBikesService --> EBikesRepository : "uses"
+
+@enduml

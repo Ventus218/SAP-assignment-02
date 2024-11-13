@@ -103,10 +103,6 @@ Given the requirements multiple bounded contexts were identified:
 |Monitor ebikes/rides|Admin's capability to check the location of each bike and which users are riding them||
 |Authentication|Process by which the user provides enough data to the system to identify him|Login|
 
-### Domain model
-
-![Domain model](./doc/diagrams/domain-model.png)
-
 ## Design
 
 The system is designed follwing a microservice architecture.
@@ -132,16 +128,19 @@ The EBikes microservice and the Users microservice are both built follwing the h
 They don't depend on any other microservice.
 
 ![EBikes microservice components diagram](./doc/diagrams/ebikes-components.png)
+![EBikes microservice domain model](./doc/diagrams/ebikes-microservice-domain-model.png)
 
 ![Users microservice components diagram](./doc/diagrams/users-components.png)
+![Users microservice domain model](./doc/diagrams/users-microservice-domain-model.png)
 
 ### Rides microservice
-
-![Rides microservice components diagram](./doc/diagrams/rides-components.png)
 
 The Rides microservice is built follwing the hexagonal architecture.
 
 It depends on both the other microservices (EBikes and Users).
+
+![Rides microservice components diagram](./doc/diagrams/rides-components.png)
+![Rides microservice domain model](./doc/diagrams/rides-microservice-domain-model.png)
 
 ### Authentication Server
 

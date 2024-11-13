@@ -1,0 +1,25 @@
+@startuml users-microservice-domain-model
+
+title Users microservice domain model
+
+class User {
+    password: String
+}
+struct UserId {
+    value: String
+}
+User "1" -u-> "id 1" UserId
+
+class UsersRepository <<Repository>>
+UsersRepository o-l- User
+
+class UsersService <<Service>> {
+    register(username: UserID, password: String): User
+    login(username: UserID, password: String): Boolean
+    checkCredit(username: UserID): Credit
+    rechargeCredit(username: UserID, rechargeAmount: Credit): Credit
+}
+
+UsersService --> UsersRepository : "uses"
+
+@enduml
