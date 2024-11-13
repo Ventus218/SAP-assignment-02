@@ -13,7 +13,7 @@ rectangle "EBike App" {
     Admin -u-> (Monitor bike positions)
     Admin -u-> (Monitor rides)
     Admin -u-> (See registered users\n and their credit)
-    Admin -u-> (Add new bike)
+    Admin -u-> (Register new bike)
 }
 
 @enduml
