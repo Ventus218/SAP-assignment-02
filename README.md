@@ -75,6 +75,12 @@ November 29, 2024 - 9:00 AM
 ### Business requirements
 - The credit of the user must be decreased by 1 unit every second
 
+### Quality attribute scenarios
+
+|Quality attribute|Source|Stimulus|Artifact|Environment|Response|Response measure|
+|------------|------------|------------|------------|------------|------------|------------|
+|Availablilty|User/Admin|Interacts with the system causing a component crash|System component|Normal conditions|The component is restarted|in 10 seconds|
+
 ## Analisys
 
 ### Bounded contexts
