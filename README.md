@@ -105,7 +105,7 @@ Given the requirements multiple bounded contexts were identified:
 
 ## Design
 
-The system is designed follwing a microservice architecture.
+The system is designed follwing a microservice architecture where each bounded contexts is mapped to a single microservice or frontend.
 
 ![Components diagram](./doc/diagrams/components.png)
 
