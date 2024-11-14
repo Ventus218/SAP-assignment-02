@@ -25,4 +25,7 @@ class EBikesService <<Service>> {
 
 EBikesService --> EBikesRepository : "uses"
 
+class MetricsService <<Service>>
+EBikesService --> MetricsService : "uses"
+
 @enduml

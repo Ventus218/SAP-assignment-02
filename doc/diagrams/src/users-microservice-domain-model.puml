@@ -24,4 +24,7 @@ class UsersService <<Service>> {
 
 UsersService --> UsersRepository : "uses"
 
+class MetricsService <<Service>>
+UsersService --> MetricsService : "uses"
+
 @enduml
