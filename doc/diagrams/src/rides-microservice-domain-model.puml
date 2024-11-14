@@ -26,6 +26,8 @@ class RidesService <<Service>> {
     startRide(eBikeId: EBikeId, username: UserId): Ride
     endRide(id: RideId)
     availableEBikes(): Collection<EBikeId>
+    ..
+    healthCheck(): Void
 }
 
 RidesService --> EBikesService : "uses"

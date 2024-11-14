@@ -6,34 +6,51 @@ component "User frontend" as UserFE <<Client>>
 component "Admin frontend" as AdminFE <<Client>>
 
 component Backend <<Server>> {
-    component "API Gateway" as APIGateway <<Microservice>>
+    component "API Gateway" <<Microservice>> as APIGateway
 
     rectangle "Private Network" {
-        component "EBikes" as EBikes <<Microservice>>
+        component "Metrics Server" <<Microservice>> as MetricsServer
+        interface "Metrics API" as MetricsAPI
+        interface "Collect Metrics API" as CollectMetricsAPI
+
+        component "EBikes" <<Microservice>> as EBikes
         interface "EBikes API" as EBikesAPI
+        
+        component "Users" <<Microservice>> as Users
+        interface "Users API" as UsersAPI
+
+        component "Rides" <<Microservice>> as Rides
+        interface "Rides API" as RidesAPI
+
+        component "Authentication Server" <<Microservice>> as AuthServer
+        interface "Authentication API" as AuthAPI
+        interface "Users Authentication API" as UserAuthAPI
+
+        APIGateway --( MetricsAPI
+        APIGateway --( CollectMetricsAPI
+        MetricsServer -u-() MetricsAPI
+
+        MetricsServer --() CollectMetricsAPI
+
         APIGateway --( EBikesAPI
         EBikes -u-() EBikesAPI
+        EBikes -u-( CollectMetricsAPI
 
-        component "Users" as Users <<Microservice>>
-        interface "Users API" as UsersAPI
         APIGateway --( UsersAPI
         Users -u-() UsersAPI
         Users -u-() UserAuthAPI
+        Users -u-( CollectMetricsAPI
 
-        component "Rides" as Rides <<Microservice>>
-        interface "Rides API" as RidesAPI
         APIGateway --( RidesAPI
-        Rides -u-() RidesAPI
+        Rides --u-() RidesAPI
         Rides --( UsersAPI
         Rides --( EBikesAPI
+        Rides -l-( CollectMetricsAPI
 
-        component "Authentication Server" as AuthServer <<Microservice>>
-        interface "Authentication API" as AuthAPI
         APIGateway --( AuthAPI
-        AuthServer -u-() AuthAPI
-
-        interface "Users Authentication API" as UserAuthAPI
+        AuthServer --u-() AuthAPI
         AuthServer --( UserAuthAPI
+        AuthServer -r-( CollectMetricsAPI
     }
 }
 

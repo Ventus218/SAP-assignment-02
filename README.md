@@ -38,6 +38,7 @@ November 29, 2024 - 9:00 AM
 |system administrator|see which users are currently riding a bike|spot any anomaly if present|
 |system administrator|see all the registered users and their credit|spot any anomaly if present|
 |system administrator|add new bikes to the system|increase the number of bikes in the future|
+|system administrator|be able to monitor metrics of the system (like health status of each component or the amount of request that were served)|spot any anomaly if present|
 
 ### Use cases
 
@@ -72,6 +73,9 @@ November 29, 2024 - 9:00 AM
 - Monitor bike positons
     1. The system administrator interface shows a graphical representation of the bike locations on a 2D space
 
+- Monitor system metrics
+    1. The system administrator interface shows for every component if it's running or not and the total amount of served requests
+
 ### Business requirements
 - The credit of the user must be decreased by 1 unit every second
 
@@ -80,6 +84,8 @@ November 29, 2024 - 9:00 AM
 |Quality attribute|Source|Stimulus|Artifact|Environment|Response|Response measure|
 |------------|------------|------------|------------|------------|------------|------------|
 |Availablilty|User/Admin|Interacts with the system causing a component crash|System component|Normal conditions|The component is restarted|in 10 seconds|
+Observability|User/Admin|Sends a request|System|Normal conditions|Keeps a request counter|An updated requests counter is somehow exposed|
+Observability|User/Admin|Interacts with the system causing a component crash|System component|Normal conditions|Tracks the current state of the crashed component|Updated information about the component state are somehow exposed|
 
 ## Analisys
 
@@ -92,6 +98,7 @@ Given the requirements multiple bounded contexts were identified:
 - E-bikes management
 - Rides management
 - User authentication (emerged due to the need of storing users credit)
+- Metrics monitoring
 
 ### Ubiquitous language
 
@@ -108,6 +115,7 @@ Given the requirements multiple bounded contexts were identified:
 |Register new ebike|An action taken by the admin which has the outcome of making the system aware of a new bike which can then be rented|Create new ebike|
 |Monitor ebikes/rides|Admin's capability to check the location of each bike and which users are riding them||
 |Authentication|Process by which the user provides enough data to the system to identify him|Login|
+|Metric|A measurement relative to a specific characteristic|Measurement|
 
 ## Design
 
@@ -151,3 +159,15 @@ It depends on both the other microservices (EBikes and Users).
 ### Authentication Server
 
 The Authentication Server is responsible for generating JSON Web Tokens (JWT) and validating them.
+
+### Metrics Server
+
+The metrics server is responsible for storing metrics data of the whole system.
+
+The required metrics are:
+- health status of each microservice
+- total amount of requests served by every microservice
+
+The health status will be tracked by polling each service at a fixed interval (Pull strategy)
+
+The amount of requests will be reported by every microservice to the Metrics Server (Push strategy)

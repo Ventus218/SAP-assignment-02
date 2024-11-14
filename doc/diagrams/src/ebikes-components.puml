@@ -6,11 +6,13 @@ left to right direction
 
 component "DB"
 interface "EBikes API" as EBikesAPI
+interface "Collect Metrics API" as CollectMetricsAPI
 
 hexagon Adapters {
     hexagon Domain as DomainHex {
         component Domain {
             portout "EBikesRepository" as Repo
+            portout MetricsService
             portin EBikesService
         }
     }
@@ -19,9 +21,16 @@ hexagon Adapters {
     RepoAdapter -u-|> Repo
     RepoAdapter -l-> DB
 
+    component "Metrics Service Adapter" as MetricsAdapter
+    MetricsAdapter -u-|> MetricsService
+    MetricsAdapter -r-( CollectMetricsAPI
+
     component "HTTPPresentationAdapter" as HTTPAdapter
     HTTPAdapter -d-> EBikesService
     HTTPAdapter -l-() EBikesAPI
 }
+
+component "Metrics Server" as MetricsServer <<Microservice>>
+MetricsServer -r-() CollectMetricsAPI
 
 @enduml

@@ -7,6 +7,10 @@ services:
     build:
       args:
         - executable=AuthenticationServer/executable.jar
+  metrics-server:
+    build:
+      args:
+        - executable=MetricsServer/executable.jar
   ebikes:
     build:
       args:

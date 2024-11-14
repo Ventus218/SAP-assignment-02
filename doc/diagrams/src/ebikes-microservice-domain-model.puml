@@ -19,6 +19,8 @@ class EBikesService <<Service>> {
     find(eBikeId: EBikeId): EBike?
     getAll(): Collection<EBike>
     register(eBikeId: EBikeId, location: P2d): EBike
+    ..
+    healthCheck(): Void
 }
 
 EBikesService --> EBikesRepository : "uses"

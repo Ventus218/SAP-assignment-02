@@ -18,6 +18,8 @@ class UsersService <<Service>> {
     login(username: UserID, password: String): Boolean
     checkCredit(username: UserID): Credit
     rechargeCredit(username: UserID, rechargeAmount: Credit): Credit
+    ..
+    healthCheck(): Void
 }
 
 UsersService --> UsersRepository : "uses"
