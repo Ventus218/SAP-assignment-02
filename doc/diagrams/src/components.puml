@@ -22,7 +22,7 @@ component Backend <<Server>> {
         component "Rides" <<Microservice>> as Rides
         interface "Rides API" as RidesAPI
 
-        component "Authentication Service" <<Microservice>> as AuthService
+        component "Authentication" <<Microservice>> as AuthService
         interface "Authentication API" as AuthAPI
         interface "Users Authentication API" as UserAuthAPI
 

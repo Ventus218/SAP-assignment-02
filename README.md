@@ -131,7 +131,7 @@ The API Gateway microservice is the only service exposed to the internet.
 It has the responsibility to relay the client requests to the appropriate services.
 
 #### A choice regarding security
-Given the fact that the API Gateway is the only exposed access point it will be resposible for validating (through the Authentication Service) every request before relaying it.
+Given the fact that the API Gateway is the only exposed access point it will be resposible for validating (through the Authentication microservice) every request before relaying it.
 
 This allows to keep the token validation logic centralized letting every other microservice assume that the requests they receive are authenticated.
 
@@ -158,9 +158,9 @@ It depends on both the other microservices (EBikes and Users).
 ![Rides microservice components diagram](./doc/diagrams/rides-components.png)
 ![Rides microservice domain model](./doc/diagrams/rides-microservice-domain-model.png)
 
-### Authentication Service
+### Authentication microservice
 
-The Authentication Service is responsible for generating JSON Web Tokens (JWT) and validating them.
+The Authentication service is responsible for generating JSON Web Tokens (JWT) and validating them.
 
 ### Metrics microservice
 
