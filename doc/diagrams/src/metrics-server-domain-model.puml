@@ -1,0 +1,25 @@
+@startuml metrics-server-domain-model
+
+struct Label {
+    value: String
+}
+
+class Measurement {
+    timestamp: DateTime
+}
+
+Measurement "0..*" -- "1..*" Label
+
+struct Endpoint {
+    class healthCheckUrl: URL
+}
+
+class MetricsService <<Service>> {
+    addMeasurement(measurement: Measurement): Void
+    getMeasurements(lables: List<Label>)
+}
+
+MetricsService "1" o-- "0..*" Endpoint : "monitors >"
+MetricsService "1" o-- "0..*" Measurement
+
+@enduml

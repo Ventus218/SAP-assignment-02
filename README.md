@@ -162,6 +162,8 @@ The Authentication Server is responsible for generating JSON Web Tokens (JWT) an
 
 ### Metrics Server
 
+![Metrics server domain model](./doc/diagrams/metrics-server-domain-model.png)
+
 The metrics server is responsible for storing metrics data of the whole system.
 
 The required metrics are:
