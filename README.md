@@ -123,6 +123,8 @@ The system is designed follwing a microservice architecture where each bounded c
 
 ![Components diagram](./doc/diagrams/components.png)
 
+\* The metrics server actually runs an healthcheck on every microservice and therefore it is loosely dependant on them, these dependencies are not shown in the diagram for the sake of simplicity
+
 ### API Gateway
 The API Gateway microservice is the only service exposed to the internet.
 
@@ -162,13 +164,13 @@ The Authentication Server is responsible for generating JSON Web Tokens (JWT) an
 
 ### Metrics Server
 
-![Metrics server domain model](./doc/diagrams/metrics-server-domain-model.png)
-
 The metrics server is responsible for storing metrics data of the whole system.
+
+![Metrics server domain model](./doc/diagrams/metrics-server-domain-model.png)
 
 The required metrics are:
 - health status of each microservice
-- total amount of requests served by every microservice
+- total amount of requests served by each microservice
 
 The health status will be tracked by polling each service at a fixed interval (Pull strategy)
 

@@ -11,7 +11,8 @@ class Measurement {
 Measurement "0..*" -- "1..*" Label
 
 struct Endpoint {
-    class healthCheckUrl: URL
+    name: String
+    healthCheckUrl: URL
 }
 
 class MetricsService <<Service>> {
