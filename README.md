@@ -162,11 +162,11 @@ It depends on both the other microservices (EBikes and Users).
 
 The Authentication Service is responsible for generating JSON Web Tokens (JWT) and validating them.
 
-### Metrics Service
+### Metrics microservice
 
 The metrics service is responsible for storing metrics data of the whole system.
 
-![Metrics service domain model](./doc/diagrams/metrics-service-domain-model.png)
+![Metrics microservice domain model](./doc/diagrams/metrics-service-domain-model.png)
 
 The required metrics are:
 - health status of each microservice
@@ -174,7 +174,7 @@ The required metrics are:
 
 The health status will be tracked by polling each service at a fixed interval (Pull strategy)
 
-The amount of requests will be reported by every microservice to the Metrics Service (Push strategy)
+The amount of requests will be reported by every microservice to the Metrics service (Push strategy)
 
 ## Deployment
 Each microservice will be deployed as a standalone Docker container while the two frontends will be deployed as standard GUI apps.

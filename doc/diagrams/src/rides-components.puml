@@ -26,7 +26,7 @@ hexagon Adapters {
     RepoAdapter -l-> DB
     RepoAdapter -u-|> Repo
 
-    component "Metrics Service Adapter" as MetricsAdapter
+    component MetricsAdapter
     MetricsAdapter -u-|> MetricsService
     MetricsAdapter --( CollectMetricsAPI
 
@@ -49,7 +49,7 @@ EBikes -r-() EBikesAPI
 component "Users" as Users <<Microservice>>
 Users -r-() UsersAPI
 
-component "Metrics Service" as MetricsService <<Microservice>>
-MetricsService -r-() CollectMetricsAPI
+component "Metrics" as Metrics <<Microservice>>
+Metrics -r-() CollectMetricsAPI
 
 @enduml

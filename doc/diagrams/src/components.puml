@@ -9,7 +9,7 @@ component Backend <<Server>> {
     component "API Gateway" <<Microservice>> as APIGateway
 
     rectangle "Private Network" {
-        component "Metrics Service" <<Microservice>> as MetricsService
+        component "Metrics" <<Microservice>> as Metrics
         interface "Metrics API" as MetricsAPI
         interface "Collect Metrics API" as CollectMetricsAPI
 
@@ -28,9 +28,9 @@ component Backend <<Server>> {
 
         APIGateway --( MetricsAPI
         APIGateway --( CollectMetricsAPI
-        MetricsService -u-() MetricsAPI
+        Metrics -u-() MetricsAPI
 
-        MetricsService --() CollectMetricsAPI
+        Metrics --() CollectMetricsAPI
 
         APIGateway --( EBikesAPI
         EBikes -u-() EBikesAPI

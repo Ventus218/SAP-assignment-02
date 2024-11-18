@@ -7,10 +7,10 @@ services:
     build:
       args:
         - executable=AuthenticationService/executable.jar
-  metrics-service:
+  metrics:
     build:
       args:
-        - executable=MetricsService/executable.jar
+        - executable=Metrics/executable.jar
   ebikes:
     build:
       args:

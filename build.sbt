@@ -34,13 +34,13 @@ lazy val authenticationService = project
     assembly / assemblyOutputPath := file("./AuthenticationService/executable.jar")
   )
 
-lazy val metricsService = project
-  .in(file("MetricsService"))
+lazy val Metrics = project
+  .in(file("Metrics"))
   .settings(
-    name := "Metrics Service",
+    name := "Metrics",
     version := "0.1.0",
     libraryDependencies += "org.scalameta" %% "munit" % "1.0.0" % Test,
-    assembly / assemblyOutputPath := file("./MetricsService/executable.jar")
+    assembly / assemblyOutputPath := file("./Metrics/executable.jar")
   )
 
 lazy val rides = project

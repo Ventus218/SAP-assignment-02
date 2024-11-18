@@ -15,12 +15,12 @@ struct Endpoint {
     healthCheckUrl: URL
 }
 
-class MetricsService <<Service>> {
+class Metrics <<Service>> {
     addMeasurement(measurement: Measurement): Void
     getMeasurements(lables: List<Label>)
 }
 
-MetricsService "1" o-- "0..*" Endpoint : "monitors >"
-MetricsService "1" o-- "0..*" Measurement
+Metrics "1" o-- "0..*" Endpoint : "monitors >"
+Metrics "1" o-- "0..*" Measurement
 
 @enduml
