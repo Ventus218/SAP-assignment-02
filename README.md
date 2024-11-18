@@ -175,3 +175,23 @@ The required metrics are:
 The health status will be tracked by polling each service at a fixed interval (Pull strategy)
 
 The amount of requests will be reported by every microservice to the Metrics Server (Push strategy)
+
+## Deployment
+Each microservice will be deployed as a standalone Docker container while the two frontends will be deployed as standard GUI apps.
+
+In order to achieve an effective and simple deployment a [docker compose file](./docker-compose.yml) has been written.
+
+## Fault tolerance / recovering
+The system will exploit the underlying deployment platform (Docker / Docker compose) to restart services in case of failure.
+
+## Service discovery
+A service discovery mechanism has to be implemented due to the subsequent reasons:
+- Each microservice could be restarted in case of failure and as a consequence it could change it's network address
+- Future versions of the software may require to create multiple instances of the same service due to heavy workloads and therefore the network address may change at runtime.
+
+Given these requirements the built-in DNS service provided by Docker can be exploited to achieve the desired behavior.
+
+## Configuration
+Since the microservices configuration does not need to be changed at runtime the simplest way to provide an externalized configuration is through enviornment variables that will be passed at deploy-time.
+
+## Testing
