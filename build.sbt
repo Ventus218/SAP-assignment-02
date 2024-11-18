@@ -25,22 +25,22 @@ lazy val apiGateway = project
     assembly / assemblyOutputPath := file("./ApiGateway/executable.jar")
   )
 
-lazy val authenticationServer = project
-  .in(file("AuthenticationServer"))
+lazy val authenticationService = project
+  .in(file("AuthenticationService"))
   .settings(
-    name := "Authentication Server",
+    name := "Authentication Service",
     version := "0.1.0",
     libraryDependencies += "org.scalameta" %% "munit" % "1.0.0" % Test,
-    assembly / assemblyOutputPath := file("./AuthenticationServer/executable.jar")
+    assembly / assemblyOutputPath := file("./AuthenticationService/executable.jar")
   )
 
-lazy val metricsServer = project
-  .in(file("MetricsServer"))
+lazy val metricsService = project
+  .in(file("MetricsService"))
   .settings(
-    name := "Metrics Server",
+    name := "Metrics Service",
     version := "0.1.0",
     libraryDependencies += "org.scalameta" %% "munit" % "1.0.0" % Test,
-    assembly / assemblyOutputPath := file("./MetricsServer/executable.jar")
+    assembly / assemblyOutputPath := file("./MetricsService/executable.jar")
   )
 
 lazy val rides = project

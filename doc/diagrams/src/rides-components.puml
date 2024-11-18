@@ -49,7 +49,7 @@ EBikes -r-() EBikesAPI
 component "Users" as Users <<Microservice>>
 Users -r-() UsersAPI
 
-component "Metrics Server" as MetricsServer <<Microservice>>
-MetricsServer -r-() CollectMetricsAPI
+component "Metrics Service" as MetricsService <<Microservice>>
+MetricsService -r-() CollectMetricsAPI
 
 @enduml

@@ -1,4 +1,4 @@
-@startuml metrics-server-domain-model
+@startuml metrics-service-domain-model
 
 struct Label {
     value: String

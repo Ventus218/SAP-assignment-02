@@ -123,7 +123,7 @@ The system is designed follwing a microservice architecture where each bounded c
 
 ![Components diagram](./doc/diagrams/components.png)
 
-\* The metrics server actually runs an healthcheck on every microservice and therefore it is loosely dependant on them, these dependencies are not shown in the diagram for the sake of simplicity
+\* The metrics service actually runs an healthcheck on every microservice and therefore it is loosely dependant on them, these dependencies are not shown in the diagram for the sake of simplicity
 
 ### API Gateway
 The API Gateway microservice is the only service exposed to the internet.
@@ -131,7 +131,7 @@ The API Gateway microservice is the only service exposed to the internet.
 It has the responsibility to relay the client requests to the appropriate services.
 
 #### A choice regarding security
-Given the fact that the API Gateway is the only exposed access point it will be resposible for validating (through the Authentication Server) every request before relaying it.
+Given the fact that the API Gateway is the only exposed access point it will be resposible for validating (through the Authentication Service) every request before relaying it.
 
 This allows to keep the token validation logic centralized letting every other microservice assume that the requests they receive are authenticated.
 
@@ -158,15 +158,15 @@ It depends on both the other microservices (EBikes and Users).
 ![Rides microservice components diagram](./doc/diagrams/rides-components.png)
 ![Rides microservice domain model](./doc/diagrams/rides-microservice-domain-model.png)
 
-### Authentication Server
+### Authentication Service
 
-The Authentication Server is responsible for generating JSON Web Tokens (JWT) and validating them.
+The Authentication Service is responsible for generating JSON Web Tokens (JWT) and validating them.
 
-### Metrics Server
+### Metrics Service
 
-The metrics server is responsible for storing metrics data of the whole system.
+The metrics service is responsible for storing metrics data of the whole system.
 
-![Metrics server domain model](./doc/diagrams/metrics-server-domain-model.png)
+![Metrics service domain model](./doc/diagrams/metrics-service-domain-model.png)
 
 The required metrics are:
 - health status of each microservice
@@ -174,7 +174,7 @@ The required metrics are:
 
 The health status will be tracked by polling each service at a fixed interval (Pull strategy)
 
-The amount of requests will be reported by every microservice to the Metrics Server (Push strategy)
+The amount of requests will be reported by every microservice to the Metrics Service (Push strategy)
 
 ## Deployment
 Each microservice will be deployed as a standalone Docker container while the two frontends will be deployed as standard GUI apps.

@@ -9,7 +9,7 @@ component Backend <<Server>> {
     component "API Gateway" <<Microservice>> as APIGateway
 
     rectangle "Private Network" {
-        component "Metrics Server" <<Microservice>> as MetricsServer
+        component "Metrics Service" <<Microservice>> as MetricsService
         interface "Metrics API" as MetricsAPI
         interface "Collect Metrics API" as CollectMetricsAPI
 
@@ -22,15 +22,15 @@ component Backend <<Server>> {
         component "Rides" <<Microservice>> as Rides
         interface "Rides API" as RidesAPI
 
-        component "Authentication Server" <<Microservice>> as AuthServer
+        component "Authentication Service" <<Microservice>> as AuthService
         interface "Authentication API" as AuthAPI
         interface "Users Authentication API" as UserAuthAPI
 
         APIGateway --( MetricsAPI
         APIGateway --( CollectMetricsAPI
-        MetricsServer -u-() MetricsAPI
+        MetricsService -u-() MetricsAPI
 
-        MetricsServer --() CollectMetricsAPI
+        MetricsService --() CollectMetricsAPI
 
         APIGateway --( EBikesAPI
         EBikes -u-() EBikesAPI
@@ -48,9 +48,9 @@ component Backend <<Server>> {
         Rides -l-( CollectMetricsAPI
 
         APIGateway --( AuthAPI
-        AuthServer --u-() AuthAPI
-        AuthServer --( UserAuthAPI
-        AuthServer -r-( CollectMetricsAPI
+        AuthService --u-() AuthAPI
+        AuthService --( UserAuthAPI
+        AuthService -r-( CollectMetricsAPI
     }
 }
 

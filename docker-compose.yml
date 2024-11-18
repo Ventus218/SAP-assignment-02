@@ -3,14 +3,14 @@ services:
     build:
       args:
         - executable=ApiGateway/executable.jar
-  authentication-server:
+  authentication-service:
     build:
       args:
-        - executable=AuthenticationServer/executable.jar
-  metrics-server:
+        - executable=AuthenticationService/executable.jar
+  metrics-service:
     build:
       args:
-        - executable=MetricsServer/executable.jar
+        - executable=MetricsService/executable.jar
   ebikes:
     build:
       args:
