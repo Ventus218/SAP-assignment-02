@@ -4,7 +4,7 @@ title Rides microservice domain model
 
 class Ride {
     eBikeId: EBikeId
-    username: UserId
+    username: Username
     start: DateTime
     end: DateTime?
 }
@@ -20,7 +20,7 @@ class RidesService <<Service>> {
     findRide(rideId: RideId): Ride?
     getAllRides(): Collection<Ride>
     getAllActiveRides(): Collection<Ride>
-    startRide(eBikeId: EBikeId, username: UserId): Ride
+    startRide(eBikeId: EBikeId, username: Username): Ride
     endRide(id: RideId)
     availableEBikes(): Collection<EBikeId>
     ..

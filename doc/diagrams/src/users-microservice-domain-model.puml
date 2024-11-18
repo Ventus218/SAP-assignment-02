@@ -3,21 +3,19 @@
 title Users microservice domain model
 
 class User {
-    password: String
+    credit: Credit
 }
-struct UserId {
+struct Username {
     value: String
 }
-User "1" -u-> "id 1" UserId
+User "1" -u-> "id 1" Username
 
 class UsersRepository <<Repository>>
 UsersRepository o-l- User
 
 class UsersService <<Service>> {
-    register(username: UserID, password: String): User
-    login(username: UserID, password: String): Boolean
-    checkCredit(username: UserID): Credit
-    rechargeCredit(username: UserID, rechargeAmount: Credit): Credit
+    checkCredit(username: Username): Credit
+    rechargeCredit(username: Username, rechargeAmount: Credit): Credit
     ..
     healthCheck(): Void
 }
