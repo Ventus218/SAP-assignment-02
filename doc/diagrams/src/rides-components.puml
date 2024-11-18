@@ -14,9 +14,9 @@ hexagon Adapters {
     hexagon Domain as DomainHex {
         component Domain {
             'ports in or out are just used for layout purposes and do not have any semantic'
-            portout "RidesRepository" as Repo
-            portin RidesService
             portin UsersService
+            portin RidesService
+            portout "RidesRepository" as Repo
             portout MetricsService
             portout EBikesService
         }
@@ -34,13 +34,13 @@ hexagon Adapters {
     EBikesAdapter -r-( EBikesAPI
     EBikesAdapter -u-|> EBikesService
 
-    component UsersAdapter
-    UsersAdapter -r-( UsersAPI
-    UsersAdapter -d-|> UsersService
-
     component "HTTPPresentationAdapter" as HTTPAdapter
     HTTPAdapter -l-() RidesAPI
     HTTPAdapter -d-> RidesService
+
+    component UsersAdapter
+    UsersAdapter -r-( UsersAPI
+    UsersAdapter -d-|> UsersService
 }
 
 component "EBikes" as EBikes <<Microservice>>
