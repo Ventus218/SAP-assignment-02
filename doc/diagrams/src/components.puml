@@ -24,7 +24,7 @@ component Backend <<Server>> {
 
         component "Authentication" <<Microservice>> as AuthService
         interface "Authentication API" as AuthAPI
-        interface "Users Authentication API" as UserAuthAPI
+        interface "Users Registration API" as UserRegistrationAPI
 
         APIGateway --( MetricsAPI
         APIGateway --( CollectMetricsAPI
@@ -38,7 +38,7 @@ component Backend <<Server>> {
 
         APIGateway --( UsersAPI
         Users -u-() UsersAPI
-        Users -u-() UserAuthAPI
+        Users -u-() UserRegistrationAPI
         Users -u-( CollectMetricsAPI
 
         APIGateway --( RidesAPI
@@ -49,7 +49,7 @@ component Backend <<Server>> {
 
         APIGateway --( AuthAPI
         AuthService --u-() AuthAPI
-        AuthService --( UserAuthAPI
+        AuthService --( UserRegistrationAPI
         AuthService -r-( CollectMetricsAPI
     }
 }
