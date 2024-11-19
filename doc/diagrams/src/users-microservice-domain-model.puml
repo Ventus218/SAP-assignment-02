@@ -14,6 +14,7 @@ class UsersRepository <<Repository>>
 UsersRepository o-l- User
 
 class UsersService <<Service>> {
+    registerUser(username: Username): User
     checkCredit(username: Username): Credit
     rechargeCredit(username: Username, rechargeAmount: Credit): Credit
     ..

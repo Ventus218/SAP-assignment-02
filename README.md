@@ -160,7 +160,44 @@ It depends on both the other microservices (EBikes and Users).
 
 ### Authentication microservice
 
-The Authentication service is responsible for generating JSON Web Tokens (JWT) and validating them.
+The Authentication service is responsible for every aspect regarding user authentication.
+
+In fact the user password is not stored in the [user microservice](#ebikes-and-users-microservices) but it's stored in this one.
+
+![Authentication microservice domain model](./doc/diagrams/authentication-service-domain-model.png)
+
+Operations offered by this service are handled in this way:
+
+#### Register new user
+Registering a new user is the most complex operation as it requires interaction with the Users microservice.
+
+The service:
+1. will check that a user with that username does not already exist.
+1. will send a request of registering a user to the Users service
+1. if the operation succedes then will proceed by inserting a new AuthInfo into its AuthInfoRepository.
+1. will issue and return a JWT token
+
+In case of failure of the operation after successfully completing point 2 the system may be in an unconsistent state (a user has been created but has no AuthInfo).
+
+To achieve eventual consistency this edge case is handled as it follows:
+1. Once the service will try to create the (same) user (point 2) it will receive an error saying that the user is already registered but since it was already checked that no AuthInfo existed then the service will proceed like no error has happened.
+
+#### Authenticate existing user
+Given a username and password the service checks if they're valid and if so it issues a JWT with relatively short expiration time (like 15 minutes).
+Also ensures that the `canRenew` flag is set to true.
+
+#### Validating a JTW token
+Given a JWT token the service verify it has a valid signature and that it's not expired.
+
+#### Refreshing JWT token
+Given a non-expired token the service will issue a new one only if the `canRenew` flag of the relative AuthInfo is set to true.
+
+#### Force authentication
+The `canRenew` flag of the user with the given username will be set to false so that it cannot renew his tokens until he authenticates again.
+
+> **Note:**
+>
+> This mechanism allow to easily renew tokens while still keeping the possibility of forcing a user to re-authenticate. (For example in case he changes his password or strange behaviors are detected)
 
 ### Metrics microservice
 
