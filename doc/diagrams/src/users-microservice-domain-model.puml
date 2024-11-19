@@ -2,13 +2,17 @@
 
 title Users microservice domain model
 
-class User {
-    credit: Credit
-}
+class User {}
+
 struct Username {
     value: String
 }
 User "1" -u-> "id 1" Username
+
+struct Credit {
+    amount: Int
+}
+User "1" -u-> "credit 1" Credit
 
 class UsersRepository <<Repository>>
 UsersRepository o-l- User
