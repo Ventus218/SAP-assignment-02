@@ -16,6 +16,15 @@ ThisBuild / scalaVersion := "3.5.2"
 //     libraryDependencies += "org.scalameta" %% "munit" % "1.0.0" % Test
 //   )
 
+lazy val shared = project
+  .in(file("Shared"))
+  .settings(
+    name := "Shared",
+    version := "0.1.0",
+    libraryDependencies += "org.scalameta" %% "munit" % "1.0.0" % Test,
+    libraryDependencies += "com.lihaoyi" %% "upickle" % "4.0.2"
+  )
+
 lazy val apiGateway = project
   .in(file("ApiGateway"))
   .settings(
@@ -60,6 +69,7 @@ lazy val users = project
     libraryDependencies += "org.scalameta" %% "munit" % "1.0.0" % Test,
     assembly / assemblyOutputPath := file("./Users/executable.jar")
   )
+  .dependsOn(shared)
 
 lazy val eBikes = project
   .in(file("EBikes"))
