@@ -12,6 +12,6 @@ object Main extends App:
   val usersService = UsersServiceImpl(adapter)
   val username = Username("tizio")
   adapter.insert(username, User(username, Credit(100))) match
-    case Left(exception) => adapter.update(username, User(username, Credit(55)))
+    case Left(exception) =>
+      adapter.update(username, _.rechargeCredit(Credit(10)))
     case Right(value) => println("created")
-  

@@ -8,7 +8,7 @@ trait Repository[ID, T] {
 
   def insert(id: ID, entity: T): Either[DuplicateIdException, Unit]
 
-  def update(id: ID, entity: T): Either[NotInRepositoryException, Unit]
+  def update(id: ID, f: T => T): Either[NotInRepositoryException, T]
 
   def find(id: ID): Option[T]
 

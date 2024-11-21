@@ -68,8 +68,8 @@ class FileSystemRepositoryAdapter[ID: ReadWriter, T: ReadWriter](
 
   override def update(
       id: ID,
-      entity: T
-  ): Either[NotInRepositoryException, Unit] =
+      f: T => T
+  ): Either[NotInRepositoryException, T] =
     find(id) match
       case None =>
         Left(
@@ -77,9 +77,10 @@ class FileSystemRepositoryAdapter[ID: ReadWriter, T: ReadWriter](
             s"An $entityName with id $id does not exist."
           )
         )
-      case Some(_) =>
+      case Some(obj) =>
+        val updated = f(obj)
         overwriteItems(getAllItems().collect {
-          case Item(`id`, _) => Item(id, entity)
+          case Item(`id`, _) => Item(id, updated)
           case item          => item
         })
-        Right(())
+        Right(updated)
