@@ -1,5 +1,12 @@
 ThisBuild / scalaVersion := "3.5.2"
 
+// AKKA HTTP
+ThisBuild / resolvers += "Akka library repository".at(
+  "https://repo.akka.io/maven"
+)
+val AkkaVersion = "2.9.3"
+val AkkaHttpVersion = "10.6.3"
+
 // lazy val userFrontend = project
 //   .in(file("UserFrontend"))
 //   .settings(
@@ -66,6 +73,10 @@ lazy val users = project
   .settings(
     name := "Users",
     version := "0.1.0",
+    libraryDependencies += "com.typesafe.akka" %% "akka-actor-typed" % AkkaVersion,
+    libraryDependencies += "com.typesafe.akka" %% "akka-stream" % AkkaVersion,
+    libraryDependencies += "com.typesafe.akka" %% "akka-http" % AkkaHttpVersion,
+    libraryDependencies += "com.typesafe.akka" %% "akka-http-spray-json" % AkkaHttpVersion,
     libraryDependencies += "org.scalameta" %% "munit" % "1.0.0" % Test,
     assembly / assemblyOutputPath := file("./Users/executable.jar")
   )
