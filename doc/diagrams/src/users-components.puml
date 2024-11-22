@@ -6,7 +6,7 @@ left to right direction
 
 component "DB"
 interface "Users API" as UsersAPI
-interface "Users Authentication API" as UsersAuthAPI
+interface "Users Registration API" as UsersRegistrationAPI
 interface "Collect Metrics API" as CollectMetricsAPI
 
 hexagon Adapters {
@@ -29,9 +29,9 @@ hexagon Adapters {
     component "HTTPPresentationAdapter" as HTTPAdapter
     HTTPAdapter -d-> UsersService
     HTTPAdapter -() UsersAPI
-    HTTPAdapter -() UsersAuthAPI
+    HTTPAdapter -() UsersRegistrationAPI
     ' just for layout
-    UsersAPI -[hidden]-> UsersAuthAPI
+    UsersAPI -[hidden]-> UsersRegistrationAPI
 }
 
 component "Metrics" as Metrics <<Microservice>>
