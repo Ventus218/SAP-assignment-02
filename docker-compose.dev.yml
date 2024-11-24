@@ -1,0 +1,4 @@
+services:
+  users:
+    ports:
+      - 8080:8080
