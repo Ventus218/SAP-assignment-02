@@ -19,6 +19,8 @@ services:
     build:
       args:
         - executable=Users/executable.jar
+    networks:
+      - private_network
   rides:
     build:
       args:
