@@ -1,10 +1,10 @@
 package users.domain;
 
 import users.domain.model.*;
-import shared.ports.persistence.Repository;
 import users.domain.errors.*
+import users.ports.persistence.UsersRepository;
 
-class UsersServiceImpl(private val usersRepository: Repository[Username, User])
+class UsersServiceImpl(private val usersRepository: UsersRepository)
     extends UsersService:
 
   override def registerUser(

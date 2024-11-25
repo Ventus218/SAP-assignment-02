@@ -1,5 +1,3 @@
 package users.domain.model;
 
-import upickle.default.*
-
-case class Username(value: String) derives ReadWriter
+case class Username(value: String)

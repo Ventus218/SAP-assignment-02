@@ -1,8 +1,6 @@
 package users.domain.model;
 
-import upickle.default.*
-
-case class User(username: Username, credit: Credit) derives ReadWriter
+case class User(username: Username, credit: Credit)
 
 extension (u: User)
   def rechargeCredit(credit: Credit): User =
