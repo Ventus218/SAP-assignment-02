@@ -240,3 +240,12 @@ Given these requirements the built-in DNS service provided by Docker can be expl
 Since the microservices configuration does not need to be changed at runtime the simplest way to provide an externalized configuration is through enviornment variables that will be passed at deploy-time.
 
 ## Testing
+It is required to provide at least one test for each layer in the testing pyramid
+
+<!-- TODO: add example tests references -->
+|Test type  |Amount     |Complexity |Examples   |
+|-----------|-----------|-----------|-----------|
+|End-to-end |Low        |Very high  ||
+|Component  |Medium     |High       ||
+|Integration|High       |Medium     ||
+|Unit       |Very high  |Low        ||
