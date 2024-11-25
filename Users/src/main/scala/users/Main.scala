@@ -10,8 +10,7 @@ import users.adapters.presentation.HttpPresentationAdapter
 import users.adapters.persistence.UsersFileSystemRepositoryAdapter
 
 object Main extends App:
-  // TODO: externalize configuration of DB file path
-  val db = FileSystemDatabaseImpl(File("/Users/Alessandro/Desktop/users/db"))
+  val db = FileSystemDatabaseImpl(File("/data/db"))
   val adapter = UsersFileSystemRepositoryAdapter(db)
   val usersService = UsersServiceImpl(adapter)
   val host = sys.env.get("HOST").getOrElse("0.0.0.0")

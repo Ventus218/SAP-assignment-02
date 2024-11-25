@@ -4,6 +4,8 @@ ARG executable=executable.jar
 
 EXPOSE 8080
 
+VOLUME [ "/data/db" ]
+
 WORKDIR /
 
 COPY ${executable} /executable.jar
