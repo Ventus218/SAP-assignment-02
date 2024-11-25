@@ -90,3 +90,28 @@ lazy val eBikes = project
     libraryDependencies += "org.scalameta" %% "munit" % "1.0.0" % Test,
     assembly / assemblyOutputPath := file("./EBikes/executable.jar")
   )
+
+import scala.sys.process.*
+
+val allProjectsFilter = ScopeFilter(projects = inAnyProject)
+
+lazy val composeUp =
+  taskKey[Any]("Builds the docker images and runs compose up")
+composeUp := {
+  assembly.all(allProjectsFilter).value
+  composeUpProcess() !
+}
+
+lazy val composeUpDev = taskKey[Any](
+  "Builds the docker images and runs compose up (also loads the docker-compose.dev.yml)"
+)
+composeUpDev := {
+  assembly.all(allProjectsFilter).value
+  composeUpProcess("docker-compose.yml", "docker-compose.dev.yml") !
+}
+
+def composeUpProcess(composeFiles: String*): ProcessBuilder = {
+  val ymlFilesOptions =
+    composeFiles.map("-f " + _).reduceOption(_ + " " + _).getOrElse("")
+  s"docker compose $ymlFilesOptions build" #&& s"docker compose $ymlFilesOptions up"
+}
