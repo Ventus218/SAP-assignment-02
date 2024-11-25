@@ -29,6 +29,9 @@ object HttpPresentationAdapter:
     val route =
       pathPrefix("users"):
         concat(
+          get:
+            complete(usersService.users().toArray)
+          ,
           pathPrefix(Segment / "credit"): username =>
             concat(
               get:

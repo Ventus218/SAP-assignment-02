@@ -14,4 +14,6 @@ trait UsersService:
       rechargeAmount: Credit
   ): Either[UserNotFound, Credit]
 
+  def users(): Iterable[User]
+
   // TODO: healthCheck

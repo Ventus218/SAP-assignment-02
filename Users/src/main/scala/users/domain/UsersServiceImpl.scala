@@ -27,3 +27,6 @@ class UsersServiceImpl(private val usersRepository: Repository[Username, User])
     usersRepository.update(username, _.rechargeCredit(rechargeAmount)) match
       case Left(value)  => Left(UserNotFound(username))
       case Right(value) => Right(value.credit)
+
+  override def users(): Iterable[User] =
+    usersRepository.getAll()
