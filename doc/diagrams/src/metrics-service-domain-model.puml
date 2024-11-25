@@ -17,7 +17,7 @@ struct Endpoint {
 
 class Metrics <<Service>> {
     addMeasurement(measurement: Measurement): Void
-    getMeasurements(lables: List<Label>)
+    measurements(lables: Seq<Label>)
 }
 
 Metrics "1" o-- "0..*" Endpoint : "monitors >"

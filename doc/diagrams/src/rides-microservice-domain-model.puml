@@ -18,11 +18,11 @@ RidesRepository o-l- Ride
 
 class RidesService <<Service>> {
     findRide(rideId: RideId): Ride?
-    getAllRides(): Collection<Ride>
-    getAllActiveRides(): Collection<Ride>
+    rides(): Iterable<Ride>
+    getAllActiveRides(): Iterable<Ride>
     startRide(eBikeId: EBikeId, username: Username): Ride
     endRide(id: RideId)
-    availableEBikes(): Collection<EBikeId>
+    availableEBikes(): Iterable<EBikeId>
     ..
     healthCheck(): Void
 }

@@ -17,7 +17,7 @@ EBikesRepository o-l- EBike
 
 class EBikesService <<Service>> {
     find(eBikeId: EBikeId): EBike?
-    getAll(): Collection<EBike>
+    eBikes(): Iterable<EBike>
     register(eBikeId: EBikeId, location: P2d): EBike
     ..
     healthCheck(): Void
