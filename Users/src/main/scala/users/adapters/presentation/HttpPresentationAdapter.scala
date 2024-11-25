@@ -29,31 +29,32 @@ object HttpPresentationAdapter:
     val route =
       pathPrefix("users"):
         concat(
-          get:
+          (get & pathEnd):
             complete(usersService.users().toArray)
           ,
-          pathPrefix(Segment / "credit"): username =>
-            concat(
-              get:
-                usersService.checkCredit(Username(username)) match
-                  case Left(value)  => complete(NotFound, "User not found")
-                  case Right(value) => complete(value)
-              ,
-              post:
-                entity(as[Credit]) { credit =>
-                  usersService.rechargeCredit(Username(username), credit) match
-                    case Left(value)  => complete(NotFound, "User not found")
-                    case Right(value) => complete(value)
-
-                }
-            ),
-          post:
+          (post & pathEnd):
             entity(as[Username]) { username =>
               usersService.registerUser(username) match
                 case Left(value) =>
                   complete(Conflict, "Username already in use")
                 case Right(value) => complete(value)
             }
+          ,
+          pathPrefix(Segment / "credit"): username =>
+            concat(
+              (get & pathEnd):
+                usersService.checkCredit(Username(username)) match
+                  case Left(value)  => complete(NotFound, "User not found")
+                  case Right(value) => complete(value)
+              ,
+              (post & pathEnd):
+                entity(as[Credit]) { credit =>
+                  usersService.rechargeCredit(Username(username), credit) match
+                    case Left(value)  => complete(NotFound, "User not found")
+                    case Right(value) => complete(value)
+
+                }
+            )
         )
 
     Http().newServerAt(host, port).bind(route)
