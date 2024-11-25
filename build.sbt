@@ -1,4 +1,5 @@
 ThisBuild / scalaVersion := "3.5.2"
+ThisBuild / libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.19" % Test
 
 // AKKA HTTP
 ThisBuild / resolvers += "Akka library repository".at(
@@ -6,6 +7,12 @@ ThisBuild / resolvers += "Akka library repository".at(
 )
 val AkkaVersion = "2.9.3"
 val AkkaHttpVersion = "10.6.3"
+lazy val akkaHttpSettings = Seq(
+  libraryDependencies += "com.typesafe.akka" %% "akka-actor-typed" % AkkaVersion,
+  libraryDependencies += "com.typesafe.akka" %% "akka-stream" % AkkaVersion,
+  libraryDependencies += "com.typesafe.akka" %% "akka-http" % AkkaHttpVersion,
+  libraryDependencies += "com.typesafe.akka" %% "akka-http-spray-json" % AkkaHttpVersion
+)
 
 // lazy val userFrontend = project
 //   .in(file("UserFrontend"))
@@ -28,7 +35,6 @@ lazy val shared = project
   .settings(
     name := "Shared",
     version := "0.1.0",
-    libraryDependencies += "org.scalameta" %% "munit" % "1.0.0" % Test,
     libraryDependencies += "com.lihaoyi" %% "upickle" % "4.0.2"
   )
 
@@ -37,7 +43,6 @@ lazy val apiGateway = project
   .settings(
     name := "API Gateway",
     version := "0.1.0",
-    libraryDependencies += "org.scalameta" %% "munit" % "1.0.0" % Test,
     assembly / assemblyOutputPath := file("./ApiGateway/executable.jar")
   )
 
@@ -46,7 +51,6 @@ lazy val authentication = project
   .settings(
     name := "Authentication",
     version := "0.1.0",
-    libraryDependencies += "org.scalameta" %% "munit" % "1.0.0" % Test,
     assembly / assemblyOutputPath := file("./Authentication/executable.jar")
   )
 
@@ -55,7 +59,6 @@ lazy val metrics = project
   .settings(
     name := "Metrics",
     version := "0.1.0",
-    libraryDependencies += "org.scalameta" %% "munit" % "1.0.0" % Test,
     assembly / assemblyOutputPath := file("./Metrics/executable.jar")
   )
 
@@ -64,7 +67,6 @@ lazy val rides = project
   .settings(
     name := "Rides",
     version := "0.1.0",
-    libraryDependencies += "org.scalameta" %% "munit" % "1.0.0" % Test,
     assembly / assemblyOutputPath := file("./Rides/executable.jar")
   )
 
@@ -73,11 +75,7 @@ lazy val users = project
   .settings(
     name := "Users",
     version := "0.1.0",
-    libraryDependencies += "com.typesafe.akka" %% "akka-actor-typed" % AkkaVersion,
-    libraryDependencies += "com.typesafe.akka" %% "akka-stream" % AkkaVersion,
-    libraryDependencies += "com.typesafe.akka" %% "akka-http" % AkkaHttpVersion,
-    libraryDependencies += "com.typesafe.akka" %% "akka-http-spray-json" % AkkaHttpVersion,
-    libraryDependencies += "org.scalameta" %% "munit" % "1.0.0" % Test,
+    akkaHttpSettings,
     assembly / assemblyOutputPath := file("./Users/executable.jar")
   )
   .dependsOn(shared)
@@ -87,11 +85,7 @@ lazy val eBikes = project
   .settings(
     name := "EBikes",
     version := "0.1.0",
-    libraryDependencies += "com.typesafe.akka" %% "akka-actor-typed" % AkkaVersion,
-    libraryDependencies += "com.typesafe.akka" %% "akka-stream" % AkkaVersion,
-    libraryDependencies += "com.typesafe.akka" %% "akka-http" % AkkaHttpVersion,
-    libraryDependencies += "com.typesafe.akka" %% "akka-http-spray-json" % AkkaHttpVersion,
-    libraryDependencies += "org.scalameta" %% "munit" % "1.0.0" % Test,
+    akkaHttpSettings,
     assembly / assemblyOutputPath := file("./EBikes/executable.jar")
   )
   .dependsOn(shared)
@@ -116,7 +110,6 @@ composeUpDev := {
 }
 
 def composeUpProcess(composeFiles: String*): ProcessBuilder = {
-  val ymlFilesOptions =
-    composeFiles.map("-f " + _).reduceOption(_ + " " + _).getOrElse("")
+  val ymlFilesOptions = composeFiles.map("-f " + _).mkString(" ")
   s"docker compose $ymlFilesOptions build" #&& s"docker compose $ymlFilesOptions up"
 }
