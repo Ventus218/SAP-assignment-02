@@ -1,4 +1,9 @@
 services:
+  ebikes:
+    volumes:
+      - ${HOME}/Desktop/EBikeApp/db:/data/db:rw
+    ports:
+      - 8081:8080
   users:
     volumes:
       - ${HOME}/Desktop/EBikeApp/db:/data/db:rw
