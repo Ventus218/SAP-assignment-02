@@ -166,6 +166,14 @@ In fact the user password is not stored in the [user microservice](#ebikes-and-u
 
 ![Authentication microservice domain model](./doc/diagrams/authentication-service-domain-model.png)
 
+#### Bounded context language
+|Word|Definition|Synonyms|
+|----|----------|--------|
+|Password|The user's secret string that lets him authenticate himself||
+|PasswordHash|An hashed password, it allows to not store passwords in clear text format||
+|JWT|A token signed by the system that authenticates a user|JSON Web Token|
+|AuthInfo|A data structure that holds the user's passwordHash and a flag regarding automatic token renewal||
+
 Operations offered by this service are handled in this way:
 
 #### Register new user
