@@ -21,6 +21,7 @@ class UsersService <<Service>> {
     registerUser(username: Username): User
     checkCredit(username: Username): Credit
     rechargeCredit(username: Username, rechargeAmount: Credit): Credit
+    users(): Iterable<User>
     ..
     healthCheck(): Void
 }
