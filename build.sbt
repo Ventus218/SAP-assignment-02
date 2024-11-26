@@ -86,6 +86,7 @@ lazy val eBikes = project
     name := "EBikes",
     version := "0.1.0",
     akkaHttpSettings,
+    libraryDependencies += "com.github.pathikrit" %% "better-files" % "3.9.2" % Test,
     assembly / assemblyOutputPath := file("./EBikes/executable.jar")
   )
   .dependsOn(shared)
