@@ -15,11 +15,7 @@ class EBikesServiceTests extends AnyFlatSpec:
       with EBikesRepository
     val service = EBikesServiceImpl(repo)
 
-  trait DoubleBikeService:
-    val db = InMemoryMapDatabaseImpl()
-    val repo = new InMemoryRepositoryAdapter[EBikeId, EBike](db, "ebikes")
-      with EBikesRepository
-    val service = EBikesServiceImpl(repo)
+  trait DoubleBikeService extends CleanService:
     val bikeIds = Set[EBikeId]("b1", "b2")
     bikeIds.foreach(service.register(_, P2D(0, 0), V2D(0, 0)))
 
