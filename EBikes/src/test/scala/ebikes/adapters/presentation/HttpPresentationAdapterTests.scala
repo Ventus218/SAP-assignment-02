@@ -12,7 +12,6 @@ import akka.http.scaladsl.marshalling.Marshal
 import akka.http.scaladsl.unmarshalling.Unmarshal
 import akka.actor.typed.ActorSystem
 import akka.actor.typed.scaladsl.Behaviors
-import spray.json.RootJsonFormat
 import spray.json.DefaultJsonProtocol.*
 import ebikes.domain.model.*
 import ebikes.domain.EBikesService
