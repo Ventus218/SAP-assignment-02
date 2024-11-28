@@ -248,4 +248,4 @@ It is required to provide at least one test for each layer in the testing pyrami
 |End-to-end |Low        |Very high  ||
 |Component  |Medium     |High       ||
 |Integration|High       |Medium     |[EBikesFileSystemRepositoryAdapterTests](./EBikes/src/test/scala/ebikes/adapters/persistence/EBikesFileSystemRepositoryAdapterTests.scala), [HttpPresentationAdapterTests](./EBikes/src/test/scala/ebikes/adapters/presentation/HttpPresentationAdapterTests.scala)|
-|Unit       |Very high  |Low        |[EBikesServiceTests](./EBikes/src/test/scala/ebikes/domain/EBikesServiceTests.scala)|
+|Unit       |Very high  |Low        |[EBikesServiceTests](./EBikes/src/test/scala/ebikes/domain/EBikesServiceTests.scala), [V2DTests](./EBikes/src/test/scala/ebikes/domain/model/V2DTests.scala)|
