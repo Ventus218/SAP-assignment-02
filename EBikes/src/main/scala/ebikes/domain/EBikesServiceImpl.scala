@@ -9,7 +9,7 @@ class EBikesServiceImpl(private val eBikesRepository: EBikesRepository)
 
   override def register(
       id: EBikeId,
-      location: P2D,
+      location: V2D,
       direction: V2D
   ): Either[EBikeIdAlreadyInUse, EBike] =
     val eBike = EBike(id, location, direction, 0)

@@ -16,7 +16,6 @@ import ebikes.adapters.presentation.dto.*
 
 object HttpPresentationAdapter:
 
-  given RootJsonFormat[P2D] = jsonFormat2(P2D.apply)
   given RootJsonFormat[V2D] = jsonFormat2(V2D.apply)
   given RootJsonFormat[EBikeId] = jsonFormat1(EBikeId.apply)
   given RootJsonFormat[EBike] = jsonFormat4(EBike.apply)

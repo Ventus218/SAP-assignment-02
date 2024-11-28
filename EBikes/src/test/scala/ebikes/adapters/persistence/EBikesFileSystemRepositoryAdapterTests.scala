@@ -19,7 +19,7 @@ class EBikesFileSystemRepositoryAdapterTests extends AnyFlatSpec:
 
   trait DoubleBikeService extends CleanService:
     val bikeIds = Set[EBikeId]("b1", "b2")
-    val bikes = bikeIds.map(EBike(_, P2D(0, 0), V2D(0, 0), 0))
+    val bikes = bikeIds.map(EBike(_, V2D(), V2D(), 0))
     bikes.foreach(b => repo.insert(b.id, b))
 
   "getAll" should "retrieve no bike if repo is empty" in new CleanService:
@@ -30,7 +30,7 @@ class EBikesFileSystemRepositoryAdapterTests extends AnyFlatSpec:
 
   "insert" should "add a bike to the repository" in new CleanService:
     val id = EBikeId("b1")
-    val bike = EBike(id, P2D(0, 0), V2D(0, 0), 0)
+    val bike = EBike(id, V2D(), V2D(), 0)
     repo.insert(id, bike)
     repo.find(id) shouldBe Some(bike)
 

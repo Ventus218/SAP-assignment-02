@@ -52,7 +52,7 @@ class HttpPresentationAdapterTests extends AnyFlatSpec:
     response.status shouldBe NotFound
 
   "POST /ebikes" should "register a new bike" in new MockServiceEnv:
-    val dto = RegisterEBikeDTO(EBikeId("b3"), P2D(0, 0), V2D(0, 0))
+    val dto = RegisterEBikeDTO(EBikeId("b3"), V2D(), V2D())
     val createdBike = Await.result(
       for
         body <- Marshal(dto).to[MessageEntity]
@@ -70,7 +70,7 @@ class HttpPresentationAdapterTests extends AnyFlatSpec:
     createdBike shouldBe EBike(dto.id, dto.location, dto.direction, 0)
 
   it should "return error 409 if the bike id already exists" in new MockServiceEnv:
-    val dto = RegisterEBikeDTO(service.eBikes().head.id, P2D(0, 0), V2D(0, 0))
+    val dto = RegisterEBikeDTO(service.eBikes().head.id, V2D(), V2D())
     val response = Await.result(
       for
         body <- Marshal(dto).to[MessageEntity]
@@ -89,8 +89,8 @@ class HttpPresentationAdapterTests extends AnyFlatSpec:
   trait MockServiceEnv:
     val service = new EBikesService:
       private var bikes = Set(
-        EBike(EBikeId("b1"), P2D(0, 0), V2D(0, 0), 0),
-        EBike(EBikeId("b2"), P2D(0, 0), V2D(0, 0), 0)
+        EBike(EBikeId("b1"), V2D(), V2D(), 0),
+        EBike(EBikeId("b2"), V2D(), V2D(), 0)
       )
       override def find(id: EBikeId): Option[EBike] = bikes.find(_.id == id)
 
@@ -98,7 +98,7 @@ class HttpPresentationAdapterTests extends AnyFlatSpec:
 
       override def register(
           id: EBikeId,
-          location: P2D,
+          location: V2D,
           direction: V2D
       ): Either[EBikeIdAlreadyInUse, EBike] =
         bikes.find(_.id == id) match

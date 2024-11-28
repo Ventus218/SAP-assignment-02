@@ -17,7 +17,7 @@ class EBikesServiceTests extends AnyFlatSpec:
 
   trait DoubleBikeService extends CleanService:
     val bikeIds = Set[EBikeId]("b1", "b2")
-    bikeIds.foreach(service.register(_, P2D(0, 0), V2D(0, 0)))
+    bikeIds.foreach(service.register(_, V2D(), V2D()))
 
   "eBikes" should "retrieve no bike initially" in new CleanService:
     service.eBikes().size shouldBe 0
@@ -40,19 +40,19 @@ class EBikesServiceTests extends AnyFlatSpec:
 
   "register" should "add a new bike" in new CleanService:
     val id = "b1"
-    service.register(id, P2D(0, 0), V2D(0, 0))
+    service.register(id, V2D(), V2D())
     service.find(id).isDefined shouldBe true
 
   it should "add a new bike with provided data and speed set to 0" in new CleanService:
     val id = "b1"
-    val location = P2D(1, 2)
+    val location = V2D(1, 2)
     val direction = V2D(3, 4)
     service.register(id, location, direction)
     service.find(id) shouldBe Some(EBike(id, location, direction, 0))
 
   it should "not allow to register a new bike with an already existing id" in new DoubleBikeService:
     val id = bikeIds.head
-    val res = service.register(id, P2D(0, 0), V2D(0, 0))
+    val res = service.register(id, V2D(), V2D())
     res.isLeft shouldBe true
     res.left.get shouldBe a[EBikeIdAlreadyInUse]
 

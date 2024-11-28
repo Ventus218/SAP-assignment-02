@@ -9,7 +9,6 @@ import upickle.default.*
 class EBikesFileSystemRepositoryAdapter(db: FileSystemDatabase)
     extends EBikesRepository:
 
-  given ReadWriter[P2D] = ReadWriter.derived
   given ReadWriter[V2D] = ReadWriter.derived
   given ReadWriter[EBikeId] = ReadWriter.derived
   given ReadWriter[EBike] = ReadWriter.derived
