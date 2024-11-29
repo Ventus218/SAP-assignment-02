@@ -14,13 +14,14 @@ lazy val akkaHttpSettings = Seq(
   libraryDependencies += "com.typesafe.akka" %% "akka-http-spray-json" % AkkaHttpVersion
 )
 
-// lazy val userFrontend = project
-//   .in(file("UserFrontend"))
-//   .settings(
-//     name := "User Frontend",
-//     version := "0.1.0",
-//     libraryDependencies += "org.scalameta" %% "munit" % "1.0.0" % Test
-//   )
+lazy val userFrontend = project
+  .in(file("UserFrontend"))
+  .settings(
+    name := "User Frontend",
+    version := "0.1.0",
+    libraryDependencies += "org.scala-lang.modules" %% "scala-swing" % "3.0.0",
+    assembly / assemblyOutputPath := file("./ApiGateway/executable.jar")
+  )
 
 // lazy val adminFrontend = project
 //   .in(file("AdminFrontend"))
