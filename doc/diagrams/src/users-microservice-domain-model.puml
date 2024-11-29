@@ -31,4 +31,6 @@ UsersService --> UsersRepository : "uses"
 class MetricsService <<Service>>
 UsersService --> MetricsService : "uses"
 
+hide empty members
+
 @enduml

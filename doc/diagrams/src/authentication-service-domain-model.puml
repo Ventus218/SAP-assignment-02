@@ -27,4 +27,6 @@ AuthenticationService --> UsersService : "uses"
 class MetricsService <<Service>>
 AuthenticationService --> MetricsService : "uses"
 
+hide empty members
+
 @enduml

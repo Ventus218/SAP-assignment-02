@@ -23,4 +23,6 @@ class Metrics <<Service>> {
 Metrics "1" o-- "0..*" Endpoint : "monitors >"
 Metrics "1" o-- "0..*" Measurement
 
+hide empty members
+
 @enduml
