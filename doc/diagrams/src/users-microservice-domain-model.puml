@@ -18,9 +18,9 @@ class UsersRepository <<Repository>>
 UsersRepository o-l- User
 
 class UsersService <<Service>> {
-    registerUser(username: Username): User
-    checkCredit(username: Username): Credit
-    rechargeCredit(username: Username, rechargeAmount: Credit): Credit
+    registerUser(username: Username): Either<UsernameAlreadyInUse, User>
+    checkCredit(username: Username): Either<UserNotFound, Credit>
+    rechargeCredit(username: Username, rechargeAmount: Credit): Either<UserNotFound, Credit>
     users(): Iterable<User>
     ..
     healthCheck(): Void

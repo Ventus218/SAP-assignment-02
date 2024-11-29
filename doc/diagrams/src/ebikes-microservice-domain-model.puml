@@ -18,7 +18,7 @@ EBikesRepository o-l- EBike
 class EBikesService <<Service>> {
     find(eBikeId: EBikeId): EBike?
     eBikes(): Iterable<EBike>
-    register(eBikeId: EBikeId, location: V2D, direction: V2D): EBike
+    register(eBikeId: EBikeId, location: V2D, direction: V2D): Either<EBikeIdAlreadyInUse, EBike>
     ..
     healthCheck(): Void
 }
