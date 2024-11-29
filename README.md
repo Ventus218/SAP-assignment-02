@@ -130,6 +130,9 @@ The API Gateway microservice is the only service exposed to the internet.
 
 It has the responsibility to relay the client requests to the appropriate services.
 
+![APIGateway microservice components diagram](./doc/diagrams/apigateway-components.png)
+![APIGateway microservice domain model](./doc/diagrams/apigateway-microservice-domain-model.png)
+
 #### A choice regarding security
 Given the fact that the API Gateway is the only exposed access point it will be resposible for validating (through the Authentication microservice) every request before relaying it.
 
@@ -249,3 +252,5 @@ It is required to provide at least one test for each layer in the testing pyrami
 |Component  |Medium     |High       |[EBikesComponentTests](./EBikes/src/test/scala/ebikes/EBikesComponentTests.scala)|
 |Integration|High       |Medium     |[EBikesFileSystemRepositoryAdapterTests](./EBikes/src/test/scala/ebikes/adapters/persistence/EBikesFileSystemRepositoryAdapterTests.scala), [HttpPresentationAdapterTests](./EBikes/src/test/scala/ebikes/adapters/presentation/HttpPresentationAdapterTests.scala)|
 |Unit       |Very high  |Low        |[EBikesServiceTests](./EBikes/src/test/scala/ebikes/domain/EBikesServiceTests.scala), [V2DTests](./EBikes/src/test/scala/ebikes/domain/model/V2DTests.scala)|
+
+<!-- TODO talk about authorization issues -->
