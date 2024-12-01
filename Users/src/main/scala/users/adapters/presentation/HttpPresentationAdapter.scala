@@ -2,7 +2,6 @@ package users.adapters.presentation
 
 import scala.concurrent.Future
 import akka.actor.typed.ActorSystem
-import akka.actor.typed.scaladsl.Behaviors
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.Http.ServerBinding
 import akka.http.scaladsl.model.StatusCodes.*
@@ -23,9 +22,7 @@ object HttpPresentationAdapter:
       usersService: UsersService,
       host: String,
       port: Int
-  ): Future[ServerBinding] =
-    implicit val system = ActorSystem(Behaviors.empty, "actor-system")
-
+  )(using ActorSystem[Any]): Future[ServerBinding] =
     val route =
       pathPrefix("users"):
         concat(
