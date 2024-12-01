@@ -3,18 +3,26 @@ services:
     build:
       args:
         - executable=ApiGateway/executable.jar
+    networks:
+      - private_network
   authentication:
     build:
       args:
         - executable=Authentication/executable.jar
+    networks:
+      - private_network
   metrics:
     build:
       args:
         - executable=Metrics/executable.jar
+    networks:
+      - private_network
   ebikes:
     build:
       args:
         - executable=EBikes/executable.jar
+    networks:
+      - private_network
   users:
     build:
       args:
@@ -25,6 +33,8 @@ services:
     build:
       args:
         - executable=Rides/executable.jar
+    networks:
+      - private_network
 
 networks:
   private_network:
