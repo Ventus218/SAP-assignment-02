@@ -44,6 +44,7 @@ lazy val apiGateway = project
   .settings(
     name := "API Gateway",
     version := "0.1.0",
+    akkaHttpSettings,
     assembly / assemblyOutputPath := file("./ApiGateway/executable.jar")
   )
 
