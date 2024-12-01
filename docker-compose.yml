@@ -3,6 +3,8 @@ services:
     build:
       args:
         - executable=ApiGateway/executable.jar
+    ports:
+      - 8080:8080
     networks:
       - private_network
   authentication:
