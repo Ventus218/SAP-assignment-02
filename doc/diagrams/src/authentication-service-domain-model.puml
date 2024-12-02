@@ -11,9 +11,9 @@ AuthInfoRepository o-l- AuthInfo
 
 class AuthenticationService <<Service>> {
     register(username: Username, password: String): String
-    authenticate(username: Username, password: String): String?
-    refresh(token: String): String?
-    validate(token: String): Username?
+    authenticate(username: Username, password: String): String
+    refresh(token: String): String
+    validate(token: String): Username
     forceAuthentication(username: Username): Void
     ..
     healthCheck(): Void

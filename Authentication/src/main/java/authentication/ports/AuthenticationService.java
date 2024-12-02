@@ -2,26 +2,18 @@ package authentication.ports;
 
 import java.util.Optional;
 import authentication.domain.model.*;
+import authentication.domain.exceptions.*;
 
 public interface AuthenticationService {
 
-	public String register(Username username, String password);
+	public String register(Username username, String password) throws UserAlreadyExistsException;
 
-	/**
-	 * Returns a token or an empty optional in case the authentication failed.
-	 */
-	public Optional<String> authenticate(Username username, String password);
+	public String authenticate(Username username, String password) throws UserNotFoundException, WrongCredentialsException;
 
-	/**
-	 * Returns the new token or an empty optional in case the given one was not
-	 * valid.
-	 */
-	public Optional<String> refresh(String jwt);
+	public String refresh(String jwt)
+			throws PasswordAuthenticationRequiredException, SessionExpiredException, InvalidTokenException;
 
-	/**
-	 * If valid returns the authenticated user username otherwise an empty optional.
-	 */
-	public Optional<Username> validate(String jwt);
+	public Username validate(String jwt) throws SessionExpiredException, InvalidTokenException;
 
-	public void forceAuthentication(Username username);
+	public void forceAuthentication(Username username) throws UserNotFoundException;
 }

@@ -8,8 +8,10 @@ import com.auth0.jwt.*;
 import com.auth0.jwt.algorithms.*;
 import com.auth0.jwt.exceptions.*;
 import authentication.domain.model.*;
+import authentication.domain.exceptions.*;
 import authentication.ports.AuthenticationService;
 import authentication.ports.persistence.AuthInfoRepository;
+import authentication.ports.persistence.exceptions.*;
 
 @Service
 class AuthenticationServiceImpl implements AuthenticationService {
@@ -25,36 +27,63 @@ class AuthenticationServiceImpl implements AuthenticationService {
 		return Algorithm.HMAC256("secret");
 	}
 
-	public String register(Username username, String password) {
+	public String register(Username username, String password) throws UserAlreadyExistsException {
+		// TODO: hash password
 		throw new UnsupportedOperationException();
 	}
 
-	public Optional<String> authenticate(Username username, String password) {
-		// TODO: impl
-		var success = true;
-		if (success) {
-			return Optional.of(newJwt(username));
-		} else {
-			return Optional.empty();
+	public String authenticate(Username username, String password)
+			throws UserNotFoundException, WrongCredentialsException {
+		// TODO: hash password
+		var authInfoOpt = authInfoRepository.retrieve(username);
+		if (authInfoOpt.isEmpty()) {
+			throw new UserNotFoundException();
 		}
+		var authInfo = authInfoOpt.get();
+
+		if (!authInfo.passwordHash().equals(password)) {
+			throw new WrongCredentialsException();
+		}
+		try {
+			authInfoRepository.allowTokenRenewal(username);
+		} catch (AuthInfoNotExistsException e) {
+			throw new UserNotFoundException(); // Should not happen
+		}
+		return newJwt(username);
 	}
 
-	public Optional<String> refresh(String jwt) {
-		return validate(jwt).map(this::newJwt);
+	public String refresh(String jwt)
+			throws PasswordAuthenticationRequiredException, SessionExpiredException, InvalidTokenException {
+		var username = validate(jwt);
+		var authInfoOpt = authInfoRepository.retrieve(username);
+		if (authInfoOpt.isEmpty()) {
+			// TODO: handle consistency error
+		}
+		var authInfo = authInfoOpt.get();
+		if (!authInfo.canRenew()) {
+			throw new PasswordAuthenticationRequiredException();
+		}
+		return newJwt(username);
 	}
 
-	public Optional<Username> validate(String jwt) {
+	public Username validate(String jwt) throws SessionExpiredException, InvalidTokenException {
 		try {
 			var decodedJWT = verifier.verify(jwt);
-			// TODO: check for force authentication
-			return Optional.of(new Username(decodedJWT.getClaim("username").asString()));
+			var username = new Username(decodedJWT.getClaim("username").asString());
+			return username;
+		} catch (TokenExpiredException e) {
+			throw new SessionExpiredException();
 		} catch (JWTVerificationException exception) {
-			return Optional.empty();
+			throw new InvalidTokenException();
 		}
 	}
 
-	public void forceAuthentication(Username username) {
-		throw new UnsupportedOperationException();
+	public void forceAuthentication(Username username) throws UserNotFoundException {
+		try {
+			authInfoRepository.forcePasswordAuthentication(username);
+		} catch (AuthInfoNotExistsException e) {
+			throw new UserNotFoundException();
+		}
 	}
 
 	private String newJwt(Username username) {
