@@ -87,6 +87,7 @@ lazy val authentication = project
     name := "Authentication",
     version := "0.1.0",
     springBootSettings,
+    libraryDependencies += "com.auth0" % "java-jwt" % "4.4.0" % Compile,
     assembly / assemblyOutputPath := file("./Authentication/executable.jar")
   )
 
