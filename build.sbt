@@ -14,6 +14,39 @@ lazy val akkaHttpSettings = Seq(
   libraryDependencies += "com.typesafe.akka" %% "akka-http-spray-json" % AkkaHttpVersion
 )
 
+// Spring Boot
+val SpringBootVersion = "3.0.6"
+lazy val springBootSettings = Seq(
+  javacOptions ++= Seq("-source", "21"),
+  javacOptions ++= Seq("-target", "21"),
+  libraryDependencies += "org.springframework.boot" % "spring-boot-starter" % SpringBootVersion,
+  libraryDependencies += "org.springframework.boot" % "spring-boot-starter-web" % SpringBootVersion,
+  libraryDependencies += "org.springframework.boot" % "spring-boot-starter-data-jpa" % SpringBootVersion,
+  libraryDependencies += "com.mysql" % "mysql-connector-j" % "9.1.0" % Runtime,
+  assembly / mainClass := Some("authentication.Application"),
+  assembly / assemblyMergeStrategy := {
+    case PathList("META-INF", xs @ _*) =>
+      xs match {
+        case _
+            if xs.contains("MANIFEST.MF") ||
+              xs.contains("spring.tooling") ||
+              xs.contains("INDEX.LIST") ||
+              xs.contains("DEPENDENCIES") =>
+          MergeStrategy.discard // Discard unnecessary META-INF files
+        case _ =>
+          MergeStrategy.concat // Merge other META-INF files
+      }
+    case PathList("META-INF", "services", xs @ _*) =>
+      MergeStrategy.concat // Merge service loader files
+    case PathList("module-info.class") =>
+      MergeStrategy.discard // Discard Java 9 module information
+    case "LICENSE" | "license.txt" | "notice.txt" =>
+      MergeStrategy.rename // Use the first occurrence of these files
+    case _ =>
+      MergeStrategy.deduplicate // Use default strategy for other files
+  }
+)
+
 lazy val userFrontend = project
   .in(file("UserFrontend"))
   .settings(
@@ -53,6 +86,7 @@ lazy val authentication = project
   .settings(
     name := "Authentication",
     version := "0.1.0",
+    springBootSettings,
     assembly / assemblyOutputPath := file("./Authentication/executable.jar")
   )
 

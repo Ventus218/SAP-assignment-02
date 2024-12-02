@@ -13,6 +13,26 @@ services:
         - executable=Authentication/executable.jar
     networks:
       - private_network
+      - authentication_network
+    depends_on:
+      authentication-db:
+        condition: service_healthy
+  authentication-db:
+    image: mysql:latest
+    environment:
+      MYSQL_DATABASE: authentication-db
+      MYSQL_PASSWORD: secret
+      MYSQL_ROOT_PASSWORD: verysecret
+      MYSQL_USER: user
+    networks:
+      - authentication_network
+    healthcheck:
+      test: mysqladmin -u$$MYSQL_USER -p$$MYSQL_PASSWORD ping -h localhost
+      start_period: 20s 
+      start_interval: 1s
+      interval: 60s
+      timeout: 2s
+      retries: 5
   metrics:
     build:
       args:
@@ -40,4 +60,6 @@ services:
 
 networks:
   private_network:
+    driver: bridge
+  authentication_network:
     driver: bridge
