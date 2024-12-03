@@ -13,10 +13,11 @@ services:
     ports:
       - 8082:8080
   authentication:
-    volumes:
-      - ${HOME}/Desktop/EBikeApp/auth/mysql:/var/lib/mysql
     ports:
       - 8084:8080
     environment:
       JWT_SIGNING_SECRET: jwt_secret
       JWT_EXPIRATION_SECONDS: 30
+  authentication-db:
+    volumes:
+      - ${HOME}/Desktop/EBikeApp/auth/mysql:/var/lib/mysql
