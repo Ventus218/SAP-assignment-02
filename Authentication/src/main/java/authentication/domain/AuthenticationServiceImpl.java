@@ -3,7 +3,8 @@ package authentication.domain;
 import java.time.*;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.*;
+import jakarta.annotation.PostConstruct;
 import com.auth0.jwt.*;
 import com.auth0.jwt.algorithms.*;
 import com.auth0.jwt.exceptions.*;
@@ -19,17 +20,48 @@ class AuthenticationServiceImpl implements AuthenticationService {
 	@Autowired
 	AuthInfoRepository authInfoRepository;
 
-	private final Duration expirationDuration = Duration.ofSeconds(20);
+	@Value("${jwt.signing.secret}")
+	private String signingSecret;
 
-	private final JWTVerifier verifier = JWT.require(algorithm()).build();
+	@Value("${jwt.expiration.seconds}")
+	private String expirationSecondsString;
+
+	@PostConstruct
+	private void validateInjectedValues() {
+		if (signingSecret.isBlank()) {
+			throw new IllegalArgumentException("jwt.signing.secret can't be blank");
+		}
+		if (expirationSecondsString.isBlank()) {
+			throw new IllegalArgumentException("jwt.expiration.seconds can't be blank");
+		}
+		try {
+			Integer.parseInt(expirationSecondsString);
+		} catch (Exception e) {
+			throw new IllegalArgumentException("jwt.expiration.seconds needs to be an int");
+		}
+	}
 
 	private Algorithm algorithm() {
-		return Algorithm.HMAC256("secret");
+		return Algorithm.HMAC256(signingSecret);
+	}
+
+	private JWTVerifier verifier() {
+		return JWT.require(algorithm()).build();
+	}
+
+	private Duration expirationDuration() {
+		return Duration.ofSeconds(Integer.parseInt(expirationSecondsString));
 	}
 
 	public String register(Username username, String password) throws UserAlreadyExistsException {
-		// TODO: hash password
-		throw new UnsupportedOperationException();
+		// TODO: remember to register in user service
+		try {
+			// TODO: hash password
+			authInfoRepository.insert(new AuthInfo(username, password, true));
+			return newJwt(username);
+		} catch (AuthInfoAlreadyExistsException e) {
+			throw new UserAlreadyExistsException();
+		}
 	}
 
 	public String authenticate(Username username, String password)
@@ -57,7 +89,7 @@ class AuthenticationServiceImpl implements AuthenticationService {
 		var username = validate(jwt);
 		var authInfoOpt = authInfoRepository.retrieve(username);
 		if (authInfoOpt.isEmpty()) {
-			// TODO: handle consistency error
+			throw new IllegalStateException("Trying to refresh a token whom user authentication data is not stored");
 		}
 		var authInfo = authInfoOpt.get();
 		if (!authInfo.canRenew()) {
@@ -68,7 +100,7 @@ class AuthenticationServiceImpl implements AuthenticationService {
 
 	public Username validate(String jwt) throws SessionExpiredException, InvalidTokenException {
 		try {
-			var decodedJWT = verifier.verify(jwt);
+			var decodedJWT = verifier().verify(jwt);
 			var username = new Username(decodedJWT.getClaim("username").asString());
 			return username;
 		} catch (TokenExpiredException e) {
@@ -89,7 +121,7 @@ class AuthenticationServiceImpl implements AuthenticationService {
 	private String newJwt(Username username) {
 		var now = Instant.now();
 		return JWT.create().withClaim("username", username.value()).withIssuedAt(now)
-				.withExpiresAt(now.plus(expirationDuration)).sign(algorithm());
+				.withExpiresAt(now.plus(expirationDuration())).sign(algorithm());
 	}
 
 }

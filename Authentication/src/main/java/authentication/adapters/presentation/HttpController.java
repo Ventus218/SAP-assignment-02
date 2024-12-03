@@ -14,10 +14,15 @@ public class HttpController {
 	@Autowired
 	AuthenticationService authenticationService;
 
-	@PostMapping("/authenticate")
-	public String authenticate(@RequestBody AuthenticateDTO dto)
+	@PostMapping("/register")
+	public String register(@RequestBody RegisterDTO dto) throws UserAlreadyExistsException {
+		return authenticationService.register(dto.username(), dto.password());
+	}
+
+	@PostMapping("/{username}/authenticate")
+	public String authenticate(@PathVariable("username") String username, @RequestBody AuthenticateDTO dto)
 			throws UserNotFoundException, WrongCredentialsException {
-		return authenticationService.authenticate(dto.username(), dto.password());
+		return authenticationService.authenticate(new Username(username), dto.password());
 	}
 
 	@PostMapping("/refresh")
@@ -27,8 +32,8 @@ public class HttpController {
 		return authenticationService.refresh(token);
 	}
 
-	@PostMapping("/{username}")
-	public void refresh(@RequestHeader("Authorization") String bearerToken, @PathVariable String username)
+	@PostMapping("/{username}/forceAuthentication")
+	public void forceAuthentication(@RequestHeader("Authorization") String bearerToken, @PathVariable("username") String username)
 			throws UserNotFoundException {
 		authenticationService.forceAuthentication(new Username(username));
 	}
@@ -46,6 +51,11 @@ public class HttpController {
 			throw new BadAuthorizationHeaderException();
 		}
 		return bearerToken.substring(7);
+	}
+
+	@ResponseStatus(value = HttpStatus.CONFLICT, reason = "A user with that username is already registered in the authentication service")
+	@ExceptionHandler(UserAlreadyExistsException.class)
+	public void userAlreadyExistsExceptionExceptionHandler() {
 	}
 
 	@ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "Expecting an authorization header in the form of Authentication: Bearer <JWT>.")
