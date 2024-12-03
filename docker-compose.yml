@@ -14,6 +14,12 @@ services:
     networks:
       - private_network
       - authentication_network
+    environment:
+      JWT_SIGNING_SECRET: jwt_secret
+      JWT_EXPIRATION_SECONDS: 900 # 15 minutes
+      MYSQL_HOST: authentication-db
+      MYSQL_PORT: 3306
+      MYSQL_DB_NAME: authentication-db
     depends_on:
       authentication-db:
         condition: service_healthy

@@ -16,4 +16,6 @@ public interface AuthenticationService {
 	public Username validate(String jwt) throws SessionExpiredException, InvalidTokenException;
 
 	public void forceAuthentication(Username username) throws UserNotFoundException;
+
+	// TODO: healthcheck
 }
