@@ -6,7 +6,7 @@ import authentication.domain.exceptions.*;
 
 public interface AuthenticationService {
 
-	public String register(Username username, String password) throws UserAlreadyExistsException;
+	public String register(Username username, String password) throws UserAlreadyExistsException, SomethingWentWrongException;
 
 	public String authenticate(Username username, String password) throws UserNotFoundException, WrongCredentialsException;
 

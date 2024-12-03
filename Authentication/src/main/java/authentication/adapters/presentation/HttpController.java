@@ -15,7 +15,8 @@ public class HttpController {
 	AuthenticationService authenticationService;
 
 	@PostMapping("/register")
-	public String register(@RequestBody RegisterDTO dto) throws UserAlreadyExistsException {
+	public String register(@RequestBody RegisterDTO dto)
+			throws UserAlreadyExistsException, SomethingWentWrongException {
 		return authenticationService.register(dto.username(), dto.password());
 	}
 
@@ -33,8 +34,8 @@ public class HttpController {
 	}
 
 	@PostMapping("/{username}/forceAuthentication")
-	public void forceAuthentication(@RequestHeader("Authorization") String bearerToken, @PathVariable("username") String username)
-			throws UserNotFoundException {
+	public void forceAuthentication(@RequestHeader("Authorization") String bearerToken,
+			@PathVariable("username") String username) throws UserNotFoundException {
 		authenticationService.forceAuthentication(new Username(username));
 	}
 
@@ -51,6 +52,11 @@ public class HttpController {
 			throw new BadAuthorizationHeaderException();
 		}
 		return bearerToken.substring(7);
+	}
+
+	@ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR, reason = "Something went wrong.")
+	@ExceptionHandler(SomethingWentWrongException.class)
+	public void somethingWentWrongExceptionExceptionHandler() {
 	}
 
 	@ResponseStatus(value = HttpStatus.CONFLICT, reason = "A user with that username is already registered in the authentication service")

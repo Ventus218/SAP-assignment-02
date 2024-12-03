@@ -15,7 +15,7 @@ lazy val akkaHttpSettings = Seq(
 )
 
 // Spring Boot
-val SpringBootVersion = "3.0.6"
+val SpringBootVersion = "3.4.0"
 lazy val springBootSettings = Seq(
   javacOptions ++= Seq("-source", "21"),
   javacOptions ++= Seq("-target", "21"),

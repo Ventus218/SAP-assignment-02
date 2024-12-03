@@ -10,12 +10,16 @@ import com.auth0.jwt.algorithms.*;
 import com.auth0.jwt.exceptions.*;
 import authentication.domain.model.*;
 import authentication.domain.exceptions.*;
-import authentication.ports.AuthenticationService;
+import authentication.ports.*;
+import authentication.ports.usersservice.*;
 import authentication.ports.persistence.AuthInfoRepository;
 import authentication.ports.persistence.exceptions.*;
 
 @Service
 class AuthenticationServiceImpl implements AuthenticationService {
+
+	@Autowired
+	UsersService usersService;
 
 	@Autowired
 	AuthInfoRepository authInfoRepository;
@@ -53,8 +57,18 @@ class AuthenticationServiceImpl implements AuthenticationService {
 		return Duration.ofSeconds(Integer.parseInt(expirationSecondsString));
 	}
 
-	public String register(Username username, String password) throws UserAlreadyExistsException {
-		// TODO: remember to register in user service
+	public String register(Username username, String password) throws UserAlreadyExistsException, SomethingWentWrongException {
+		if (authInfoRepository.retrieve(username).isPresent()) {
+			throw new UserAlreadyExistsException();
+		}
+		try {
+			usersService.registerUser(username);
+		} catch (UserAlreadyRegisteredException e) {
+			// handling eventual consistency look at docs
+		} catch (UsersServiceException e) {
+			throw new SomethingWentWrongException(
+					"Something went wrong while registering the new user through the users service", e);
+		}
 		try {
 			// TODO: hash password
 			authInfoRepository.insert(new AuthInfo(username, password, true));
