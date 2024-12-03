@@ -33,3 +33,6 @@ metals.sbt
 
 # executable.jar files (used for building Docker images)
 executable.jar
+
+# production environment variables
+production.env

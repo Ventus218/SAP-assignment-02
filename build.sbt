@@ -137,7 +137,7 @@ lazy val composeUp =
   taskKey[Any]("Builds the docker images and runs compose up")
 composeUp := {
   assembly.all(allProjectsFilter).value
-  composeUpProcess() !
+  composeUpProcess("production.env") !
 }
 
 lazy val composeUpDev = taskKey[Any](
@@ -145,10 +145,10 @@ lazy val composeUpDev = taskKey[Any](
 )
 composeUpDev := {
   assembly.all(allProjectsFilter).value
-  composeUpProcess("docker-compose.yml", "docker-compose.dev.yml") !
+  composeUpProcess("development.env", "docker-compose.yml", "docker-compose.dev.yml") !
 }
 
-def composeUpProcess(composeFiles: String*): ProcessBuilder = {
+def composeUpProcess(envFile: String, composeFiles: String*): ProcessBuilder = {
   val ymlFilesOptions = composeFiles.map("-f " + _).mkString(" ")
-  s"docker compose $ymlFilesOptions build" #&& s"docker compose $ymlFilesOptions up --force-recreate"
+  s"docker compose $ymlFilesOptions --env-file $envFile build" #&& s"docker compose $ymlFilesOptions --env-file $envFile up --force-recreate"
 }

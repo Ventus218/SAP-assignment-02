@@ -16,13 +16,13 @@ services:
       - authentication_network
     environment:
       SERVICES_USERS_ADDRESS: http://users:8080
-      JWT_SIGNING_SECRET: jwt_secret
+      JWT_SIGNING_SECRET: ${JWT_SIGNING_SECRET?}
       JWT_EXPIRATION_SECONDS: 900 # 15 minutes
       MYSQL_HOST: authentication-db
       MYSQL_PORT: 3306
       MYSQL_DB_NAME: authentication-db
-      MYSQL_PASSWORD: secret
-      MYSQL_USER: user
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD?}
+      MYSQL_USER: ${MYSQL_USER?}
     depends_on:
       authentication-db:
         condition: service_healthy
@@ -30,9 +30,9 @@ services:
     image: mysql:latest
     environment:
       MYSQL_DATABASE: authentication-db
-      MYSQL_PASSWORD: secret
-      MYSQL_ROOT_PASSWORD: verysecret
-      MYSQL_USER: user
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD?}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD?}
+      MYSQL_USER: ${MYSQL_USER?}
     networks:
       - authentication_network
     healthcheck:
