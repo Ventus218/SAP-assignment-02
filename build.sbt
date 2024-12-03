@@ -22,6 +22,7 @@ lazy val springBootSettings = Seq(
   libraryDependencies += "org.springframework.boot" % "spring-boot-starter" % SpringBootVersion,
   libraryDependencies += "org.springframework.boot" % "spring-boot-starter-web" % SpringBootVersion,
   libraryDependencies += "org.springframework.boot" % "spring-boot-starter-data-jpa" % SpringBootVersion,
+  libraryDependencies += "org.springframework.security" % "spring-security-crypto" % "6.4.1",
   libraryDependencies += "com.mysql" % "mysql-connector-j" % "9.1.0" % Runtime,
   assembly / mainClass := Some("authentication.Application"),
   assembly / assemblyMergeStrategy := {

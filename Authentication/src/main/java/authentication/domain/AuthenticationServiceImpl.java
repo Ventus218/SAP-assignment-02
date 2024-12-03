@@ -8,6 +8,7 @@ import jakarta.annotation.PostConstruct;
 import com.auth0.jwt.*;
 import com.auth0.jwt.algorithms.*;
 import com.auth0.jwt.exceptions.*;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import authentication.domain.model.*;
 import authentication.domain.exceptions.*;
 import authentication.ports.*;
@@ -57,7 +58,10 @@ class AuthenticationServiceImpl implements AuthenticationService {
 		return Duration.ofSeconds(Integer.parseInt(expirationSecondsString));
 	}
 
-	public String register(Username username, String password) throws UserAlreadyExistsException, SomethingWentWrongException {
+	private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+	public String register(Username username, String password)
+			throws UserAlreadyExistsException, SomethingWentWrongException {
 		if (authInfoRepository.retrieve(username).isPresent()) {
 			throw new UserAlreadyExistsException();
 		}
@@ -70,8 +74,7 @@ class AuthenticationServiceImpl implements AuthenticationService {
 					"Something went wrong while registering the new user through the users service", e);
 		}
 		try {
-			// TODO: hash password
-			authInfoRepository.insert(new AuthInfo(username, password, true));
+			authInfoRepository.insert(new AuthInfo(username, passwordEncoder.encode(password), true));
 			return newJwt(username);
 		} catch (AuthInfoAlreadyExistsException e) {
 			throw new UserAlreadyExistsException();
@@ -80,14 +83,13 @@ class AuthenticationServiceImpl implements AuthenticationService {
 
 	public String authenticate(Username username, String password)
 			throws UserNotFoundException, WrongCredentialsException {
-		// TODO: hash password
 		var authInfoOpt = authInfoRepository.retrieve(username);
 		if (authInfoOpt.isEmpty()) {
 			throw new UserNotFoundException();
 		}
 		var authInfo = authInfoOpt.get();
 
-		if (!authInfo.passwordHash().equals(password)) {
+		if (!passwordEncoder.matches(password, authInfo.passwordHash())) {
 			throw new WrongCredentialsException();
 		}
 		try {
