@@ -149,5 +149,5 @@ composeUpDev := {
 
 def composeUpProcess(composeFiles: String*): ProcessBuilder = {
   val ymlFilesOptions = composeFiles.map("-f " + _).mkString(" ")
-  s"docker compose $ymlFilesOptions build" #&& s"docker compose $ymlFilesOptions up"
+  s"docker compose $ymlFilesOptions build" #&& s"docker compose $ymlFilesOptions up --force-recreate"
 }
