@@ -21,7 +21,7 @@ class EBikesServiceAdapter(private val address: String)(using
   override def find(id: EBikeId): Future[Option[EBike]] =
     for
       res <- Http().singleRequest(
-        HttpRequest(uri = s"ebikesEndpoint/${id.value}")
+        HttpRequest(uri = s"$ebikesEndpoint/${id.value}")
       )
       bike <- res.status match
         case StatusCodes.NotFound => Future(None)
