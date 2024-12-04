@@ -105,8 +105,10 @@ lazy val rides = project
   .settings(
     name := "Rides",
     version := "0.1.0",
+    akkaHttpSettings,
     assembly / assemblyOutputPath := file("./Rides/executable.jar")
   )
+  .dependsOn(shared)
 
 lazy val users = project
   .in(file("Users"))

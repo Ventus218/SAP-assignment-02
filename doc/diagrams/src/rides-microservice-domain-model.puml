@@ -17,11 +17,11 @@ class RidesRepository <<Repository>>
 RidesRepository o-l- Ride
 
 class RidesService <<Service>> {
-    findRide(rideId: RideId): Ride?
+    find(rideId: RideId): Ride?
     activeRides(): Iterable<Ride>
-    startRide(eBikeId: EBikeId, username: Username): Ride
-    endRide(id: RideId)
-    availableEBikes(): Iterable<EBikeId>
+    startRide(eBikeId: EBikeId, username: Username): Future<Either<UserOrEBikeAlreadyOnARide, Ride>>
+    endRide(id: RideId): Either<RideNotFound, Ride>
+    availableEBikes(): Future<Iterable<EBikeId>>
     ..
     healthCheck(): Void
 }

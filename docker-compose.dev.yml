@@ -12,6 +12,11 @@ services:
       - ${HOME}/Desktop/EBikeApp/db:/data/db:rw
     ports:
       - 8082:8080
+  rides:
+    volumes:
+      - ${HOME}/Desktop/EBikeApp/db:/data/db:rw
+    ports:
+      - 8083:8080
   authentication:
     ports:
       - 8084:8080
