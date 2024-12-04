@@ -10,10 +10,13 @@ trait RidesService:
 
   def activeRides(): Iterable[Ride]
 
+  type StartRideError = UserOrEBikeAlreadyOnARide | UserOrEBikeDoesNotExist |
+    FailureInOtherService
+
   def startRide(
       eBikeId: EBikeId,
       username: Username
-  ): Future[Either[UserOrEBikeAlreadyOnARide, Ride]]
+  ): Future[Either[StartRideError, Ride]]
 
   def endRide(id: RideId): Either[RideNotFound, Ride]
 

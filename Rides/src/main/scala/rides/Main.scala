@@ -11,6 +11,7 @@ import rides.domain.model.*
 import rides.domain.RidesServiceImpl
 import rides.adapters.presentation.HttpPresentationAdapter
 import rides.adapters.ebikesservice.EBikesServiceAdapter
+import rides.adapters.usersservice.UsersServiceAdapter
 import rides.adapters.persistence.RidesFileSystemRepositoryAdapter
 
 object Main extends App:
@@ -22,7 +23,9 @@ object Main extends App:
   val adapter = RidesFileSystemRepositoryAdapter(db)
   // TODO: externalize ebikes address configuration
   val eBikesService = EBikesServiceAdapter("ebikes:8080")
-  val ridesService = RidesServiceImpl(adapter, eBikesService)
+  // TODO: externalize ebikes address configuration
+  val usersService = UsersServiceAdapter("users:8080")
+  val ridesService = RidesServiceImpl(adapter, eBikesService, usersService)
   val host = sys.env.get("HOST").getOrElse("0.0.0.0")
   val port = (for
     portString <- sys.env.get("PORT")

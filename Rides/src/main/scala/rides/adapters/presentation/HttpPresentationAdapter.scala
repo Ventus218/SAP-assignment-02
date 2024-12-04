@@ -10,12 +10,13 @@ import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
 import spray.json.RootJsonFormat
 import spray.json.DefaultJsonProtocol.*
-import rides.domain.errors.UserOrEBikeAlreadyOnARide.*
 import rides.domain.model.*
 import rides.ports.RidesService
 import rides.adapters.presentation.DateMarshalling.*
 import rides.adapters.presentation.dto.*
-import rides.domain.errors.UserOrEBikeAlreadyOnARide.UserAlreadyOnARide
+import rides.domain.errors.*
+import rides.domain.errors.UserOrEBikeAlreadyOnARide.*
+import rides.domain.errors.UserOrEBikeDoesNotExist.*
 
 object HttpPresentationAdapter:
 
@@ -45,9 +46,15 @@ object HttpPresentationAdapter:
               onSuccess(ridesService.startRide(dto.eBikeId, dto.username)):
                 _ match
                   case Left(UserAlreadyOnARide(username)) =>
-                    complete(Conflict, s"User $username is already on a ride")
+                    complete(Conflict, s"User ${username.value} already riding")
                   case Left(EBikeAlreadyOnARide(eBikeId)) =>
-                    complete(Conflict, s"EBike $eBikeId is already on a ride")
+                    complete(Conflict, s"EBike ${eBikeId.value} already riding")
+                  case Left(UserDoesNotExist(user)) =>
+                    complete(NotFound, s"User ${user.value} does not exists")
+                  case Left(EBikeDoesNotExist(id)) =>
+                    complete(NotFound, s"EBike ${id.value} does not exists")
+                  case Left(FailureInOtherService(msg)) =>
+                    complete(InternalServerError, msg)
                   case Right(value) => complete(value)
             }
           ,
