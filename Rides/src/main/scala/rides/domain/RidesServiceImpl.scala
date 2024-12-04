@@ -6,10 +6,13 @@ import rides.domain.model.*
 import rides.domain.errors.*
 import rides.domain.errors.UserOrEBikeAlreadyOnARide.*
 import rides.ports.persistence.RidesRepository
-import rides.ports.RidesService
+import rides.ports.*
 import rides.domain.errors.UserOrEBikeAlreadyOnARide.EBikeAlreadyOnARide
 
-class RidesServiceImpl(private val ridesRepository: RidesRepository)(using
+class RidesServiceImpl(
+    private val ridesRepository: RidesRepository,
+    private val eBikesService: EBikesService
+)(using
     executionContext: ExecutionContext
 ) extends RidesService:
 
@@ -47,5 +50,7 @@ class RidesServiceImpl(private val ridesRepository: RidesRepository)(using
       case Right(value) => Right(value)
 
   def availableEBikes(): Future[Iterable[EBikeId]] =
-    // TODO: ask all bikes to bikes serice, filter out used ones
-    ???
+    for
+      allEBikes <- eBikesService.eBikes()
+      eBikesInUse = activeRides().map(_.eBikeId)
+    yield (allEBikes.toSet -- eBikesInUse)
