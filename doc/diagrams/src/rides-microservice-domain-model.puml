@@ -19,7 +19,7 @@ RidesRepository o-l- Ride
 class RidesService <<Service>> {
     find(rideId: RideId): Ride?
     activeRides(): Iterable<Ride>
-    startRide(eBikeId: EBikeId, username: Username): Future<Either<UserOrEBikeAlreadyOnARide, Ride>>
+    startRide(eBikeId: EBikeId, username: Username): Future<Either<StartRideError, Ride>>
     endRide(id: RideId): Either<RideNotFound, Ride>
     availableEBikes(): Future<Iterable<EBikeId>>
     ..
@@ -36,6 +36,16 @@ RidesService --> UsersService : "uses"
 
 class MetricsService <<Service>>
 RidesService --> MetricsService : "uses"
+
+interface StartRideError
+
+interface UserOrEBikeAlreadyOnARide extends StartRideError
+struct UserAlreadyOnARide extends UserOrEBikeAlreadyOnARide
+struct EBikeAlreadyOnARide extends UserOrEBikeAlreadyOnARide
+
+interface UserOrEBikeNotExist extends StartRideError
+struct UserNotExist extends UserOrEBikeNotExist
+struct EBikeNotExist extends UserOrEBikeNotExist
 
 hide empty members
 
