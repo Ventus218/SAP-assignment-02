@@ -97,8 +97,10 @@ lazy val metrics = project
   .settings(
     name := "Metrics",
     version := "0.1.0",
+    akkaHttpSettings,
     assembly / assemblyOutputPath := file("./Metrics/executable.jar")
   )
+  .dependsOn(shared)
 
 lazy val rides = project
   .in(file("Rides"))
@@ -147,7 +149,11 @@ lazy val composeUpDev = taskKey[Any](
 )
 composeUpDev := {
   assembly.all(allProjectsFilter).value
-  composeUpProcess("development.env", "docker-compose.yml", "docker-compose.dev.yml") !
+  composeUpProcess(
+    "development.env",
+    "docker-compose.yml",
+    "docker-compose.dev.yml"
+  ) !
 }
 
 def composeUpProcess(envFile: String, composeFiles: String*): ProcessBuilder = {

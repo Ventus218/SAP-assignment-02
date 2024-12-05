@@ -1,27 +1,59 @@
 @startuml metrics-service-domain-model
 
-struct Label {
+class MetricsService <<Service>> {
+    incrementCounter(counterId: CounterId, amount: Long): Unit
+    valueOfCounter(counterId: CounterId, atTimestamp: Long): Long
+    startMonitorEndpoint(endpoint: Endpoint): Unit
+    stopMonitorEndpoint(endpoint: Endpoint): Either<MonitoredEndpointNotFound, Unit>
+    monitoredEndpointStatus(endpoint: Endpoint): Either<MonitoredEndpointNotFound, MonitoredEndpointStatus>
+}
+
+struct CounterId {
     value: String
 }
 
-class Measurement {
-    timestamp: DateTime
+struct EventId {
+    value: String
 }
 
-Measurement "0..*" -- "1..*" Label
+struct IncrementCounterEvent <<Event>> {
+    --
+    timestamp: Long
+    incrementAmount: Long
+}
+
+IncrementCounterEvent "0..*" -- "1" CounterId
+IncrementCounterEvent "1" -- "1 id" EventId
+
+class IncrementCounterEventsRepository <<Repository>>
+IncrementCounterEventsRepository o-- IncrementCounterEvent
+MetricsService --> IncrementCounterEventsRepository : "uses"
+
+note left of IncrementCounterEvent
+    Counters are
+    Event Sourced
+end note
+
 
 struct Endpoint {
-    name: String
-    healthCheckUrl: URL
+    value: URI
 }
 
-class Metrics <<Service>> {
-    addMeasurement(measurement: Measurement): Void
-    measurements(lables: Seq<Label>)
+struct MonitoredEndpoint {
+    status: MonitoredEndpointStatus
 }
+MonitoredEndpoint "0..*" -- "1 endpoint" Endpoint
 
-Metrics "1" o-- "0..*" Endpoint : "monitors >"
-Metrics "1" o-- "0..*" Measurement
+enum MonitoredEndpointStatus {
+    Up
+    Down
+    Unknown
+}
+MonitoredEndpoint "0..*" -- "1 status" MonitoredEndpointStatus
+
+class MonitoredEndpointRepository <<Repository>>
+MonitoredEndpointRepository o--  MonitoredEndpoint
+MetricsService --> MonitoredEndpointRepository : "uses"
 
 hide empty members
 

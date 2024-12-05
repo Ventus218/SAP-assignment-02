@@ -23,3 +23,8 @@ services:
   authentication-db:
     volumes:
       - ${HOME}/Desktop/EBikeApp/auth/mysql:/var/lib/mysql
+  metrics:
+    volumes:
+      - ${HOME}/Desktop/EBikeApp/db:/data/db:rw
+    ports:
+      - 8085:8080
