@@ -21,10 +21,12 @@ object Main extends App:
 
   val db = FileSystemDatabaseImpl(File("/data/db"))
   val adapter = RidesFileSystemRepositoryAdapter(db)
-  // TODO: externalize ebikes address configuration
-  val eBikesService = EBikesServiceAdapter("ebikes:8080")
-  // TODO: externalize ebikes address configuration
-  val usersService = UsersServiceAdapter("users:8080")
+  val eBikesServiceAddress =
+    sys.env.get("EBIKES_SERVICE_ADDRESS").getOrElse("localhost:8080")
+  val eBikesService = EBikesServiceAdapter(eBikesServiceAddress)
+  val usersServiceAddress =
+    sys.env.get("USERS_SERVICE_ADDRESS").getOrElse("localhost:8080")
+  val usersService = UsersServiceAdapter(usersServiceAddress)
   val ridesService = RidesServiceImpl(adapter, eBikesService, usersService)
   val host = sys.env.get("HOST").getOrElse("0.0.0.0")
   val port = (for

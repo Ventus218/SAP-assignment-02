@@ -21,9 +21,10 @@ object Main extends App:
     })
   yield (portInt)).getOrElse(8080)
 
-  // TODO: externalize ebikes address configuration
-  val eBikesService = EBikesServiceAdapter("ebikes:8080")
-  
+  val eBikesServiceAddress =
+    sys.env.get("EBIKES_SERVICE_ADDRESS").getOrElse("localhost:8080")
+  val eBikesService = EBikesServiceAdapter(eBikesServiceAddress)
+
   val service = ApiGatewayServiceImpl(eBikesService)
 
   HttpPresentationAdapter
