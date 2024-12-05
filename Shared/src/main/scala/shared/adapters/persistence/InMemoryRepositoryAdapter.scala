@@ -21,36 +21,43 @@ class InMemoryRepositoryAdapter[ID, T](
     .get
     .asInstanceOf[scala.collection.mutable.Map[String, T]]
 
-  override def getAll(): Iterable[T] = map.values
+  override def getAll(): Iterable[T] =
+    this.synchronized:
+      map.values
 
   override def insert(id: ID, entity: T): Either[DuplicateIdException, Unit] =
-    map.contains(id) match
-      case true =>
-        Left(
-          DuplicateIdException(s"An $entityName with id $id already exists.")
-        )
-      case false =>
-        map.put(id, entity)
-        Right(())
+    this.synchronized:
+      map.contains(id) match
+        case true =>
+          Left(
+            DuplicateIdException(s"An $entityName with id $id already exists.")
+          )
+        case false =>
+          map.put(id, entity)
+          Right(())
 
   override def update(id: ID, f: T => T): Either[NotInRepositoryException, T] =
-    map.updateWith(id)(_.map(f)) match
-      case None =>
-        Left(
-          NotInRepositoryException(
-            s"An $entityName with id $id does not exist."
+    this.synchronized:
+      map.updateWith(id)(_.map(f)) match
+        case None =>
+          Left(
+            NotInRepositoryException(
+              s"An $entityName with id $id does not exist."
+            )
           )
-        )
-      case Some(value) => Right(value)
+        case Some(value) => Right(value)
 
-  override def find(id: ID): Option[T] = map.get(id)
+  override def find(id: ID): Option[T] =
+    this.synchronized:
+      map.get(id)
 
   override def delete(id: ID): Either[NotInRepositoryException, Unit] =
-    map.remove(id) match
-      case None =>
-        Left(
-          NotInRepositoryException(
-            s"An $entityName with id $id does not exist."
+    this.synchronized:
+      map.remove(id) match
+        case None =>
+          Left(
+            NotInRepositoryException(
+              s"An $entityName with id $id does not exist."
+            )
           )
-        )
-      case Some(value) => Right(())
+        case Some(value) => Right(())

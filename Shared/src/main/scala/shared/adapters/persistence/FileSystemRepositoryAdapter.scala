@@ -33,54 +33,61 @@ class FileSystemRepositoryAdapter[ID: ReadWriter, T: ReadWriter](
           );
 
   private def getAllItems(): Seq[Item] =
-    read[Seq[Item]](String(Files.readAllBytes(file.toPath())))
+    this.synchronized:
+      read[Seq[Item]](String(Files.readAllBytes(file.toPath())))
 
   private def overwriteItems(items: Seq[Item]): Unit =
-    Files.write(file.toPath(), write(items).getBytes());
+    this.synchronized:
+      Files.write(file.toPath(), write(items).getBytes());
 
   override def getAll(): Iterable[T] =
-    getAllItems().map(_.obj)
+    this.synchronized:
+      getAllItems().map(_.obj)
 
   override def insert(id: ID, entity: T): Either[DuplicateIdException, Unit] =
-    getAllItems().exists(_.id == id) match
-      case true =>
-        Left(
-          DuplicateIdException(s"An $entityName with id $id already exists.")
-        )
-      case false =>
-        overwriteItems(Item(id, entity) +: getAllItems())
-        Right(())
+    this.synchronized:
+      getAllItems().exists(_.id == id) match
+        case true =>
+          Left(
+            DuplicateIdException(s"An $entityName with id $id already exists.")
+          )
+        case false =>
+          overwriteItems(Item(id, entity) +: getAllItems())
+          Right(())
 
   override def delete(id: ID): Either[NotInRepositoryException, Unit] =
-    getAllItems().exists(_.id == id) match
-      case false =>
-        Left(
-          NotInRepositoryException(
-            s"An $entityName with id $id does not exist."
+    this.synchronized:
+      getAllItems().exists(_.id == id) match
+        case false =>
+          Left(
+            NotInRepositoryException(
+              s"An $entityName with id $id does not exist."
+            )
           )
-        )
-      case true =>
-        overwriteItems(getAllItems().filter(_.id != id))
-        Right(())
+        case true =>
+          overwriteItems(getAllItems().filter(_.id != id))
+          Right(())
 
   override def find(id: ID): Option[T] =
-    getAllItems().find(_.id == id).map(_.obj)
+    this.synchronized:
+      getAllItems().find(_.id == id).map(_.obj)
 
   override def update(
       id: ID,
       f: T => T
   ): Either[NotInRepositoryException, T] =
-    find(id) match
-      case None =>
-        Left(
-          NotInRepositoryException(
-            s"An $entityName with id $id does not exist."
+    this.synchronized:
+      find(id) match
+        case None =>
+          Left(
+            NotInRepositoryException(
+              s"An $entityName with id $id does not exist."
+            )
           )
-        )
-      case Some(obj) =>
-        val updated = f(obj)
-        overwriteItems(getAllItems().collect {
-          case Item(`id`, _) => Item(id, updated)
-          case item          => item
-        })
-        Right(updated)
+        case Some(obj) =>
+          val updated = f(obj)
+          overwriteItems(getAllItems().collect {
+            case Item(`id`, _) => Item(id, updated)
+            case item          => item
+          })
+          Right(updated)
