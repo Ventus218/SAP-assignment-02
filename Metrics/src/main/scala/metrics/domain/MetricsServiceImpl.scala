@@ -1,15 +1,51 @@
 package metrics.domain
 
 import java.util.UUID
+import java.util.concurrent.TimeUnit
+import scala.concurrent.*
+import scala.concurrent.duration.FiniteDuration
+import akka.actor.typed.ActorSystem
 import metrics.ports.MetricsService
 import metrics.ports.persistence.*
 import metrics.ports.*
 import metrics.domain.model.*
+import metrics.domain.model.MonitoredEndpointStatus.*
+import scala.util.Random
 
 class MetricsServiceImpl(
     private val counterEventsRepo: IncrementCounterEventsRepository,
-    private val endpointsRepo: MonitoredEndpointsRepository
-) extends MetricsService:
+    private val endpointsRepo: MonitoredEndpointsRepository,
+    private val initialMonitoringDelay: FiniteDuration =
+      FiniteDuration(5, TimeUnit.SECONDS),
+    private val monitoringPeriod: FiniteDuration =
+      FiniteDuration(10, TimeUnit.SECONDS)
+)(using as: ActorSystem[Any])
+    extends MetricsService:
+
+  given ExecutionContext = as.executionContext
+
+  endpointsRepo
+    .getAll()
+    .foreach(e => scheduleHealthcheck(initialMonitoringDelay, e.endpoint))
+
+  def scheduleHealthcheck(after: FiniteDuration, endpoint: Endpoint): Unit =
+    as.scheduler.scheduleOnce(
+      after,
+      () =>
+        (for
+          status <- Future {
+            Thread.sleep(5000);
+            Random.shuffle(MonitoredEndpointStatus.values.toList :+ null).head
+          }
+          _ = endpointsRepo.update(endpoint, e => e.copy(status = status)) match
+            case Left(_)  => () // The endpoint monitoring was stopped
+            case Right(_) => scheduleHealthcheck(monitoringPeriod, endpoint)
+        yield ()).recover({ case _: Any =>
+          endpointsRepo.update(endpoint, _.copy(status = Down)) match
+            case Left(_)  => () // The endpoint monitoring was stopped
+            case Right(_) => scheduleHealthcheck(monitoringPeriod, endpoint)
+        })
+    )
 
   override def incrementCounter(
       counterId: CounterId,
@@ -41,7 +77,7 @@ class MetricsServiceImpl(
     val monitoredEndpoint =
       MonitoredEndpoint(endpoint, MonitoredEndpointStatus.Unknown)
     endpointsRepo.insert(endpoint, monitoredEndpoint)
-    ()
+    scheduleHealthcheck(FiniteDuration(0, TimeUnit.SECONDS), endpoint)
 
   override def stopMonitorEndpoint(
       endpoint: Endpoint
