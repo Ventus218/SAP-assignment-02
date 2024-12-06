@@ -87,6 +87,7 @@ class HttpPresentationAdapterTests extends AnyFlatSpec:
 
   trait MockServiceEnv:
     val service = new EBikesService:
+
       private var bikes = Set(
         EBike(EBikeId("b1"), V2D(), V2D(), 0),
         EBike(EBikeId("b2"), V2D(), V2D(), 0)
@@ -106,6 +107,8 @@ class HttpPresentationAdapterTests extends AnyFlatSpec:
             bikes = bikes + bike
             Right(bike)
           case Some(value) => Left(EBikeIdAlreadyInUse(id))
+
+      override def healthCheckError(): Option[String] = None
 
     val timeout = Duration(2, "second")
     val serverBinding = Await.result(

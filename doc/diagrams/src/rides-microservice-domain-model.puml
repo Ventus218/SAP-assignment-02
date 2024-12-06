@@ -23,7 +23,7 @@ class RidesService <<Service>> {
     endRide(id: RideId): Either<RideNotFound, Ride>
     availableEBikes(): Future<Iterable<EBikeId>>
     ..
-    healthCheck(): Void
+    healthCheckError(): Option<String>
 }
 
 RidesService --> RidesRepository : "uses"

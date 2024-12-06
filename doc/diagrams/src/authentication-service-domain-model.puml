@@ -16,7 +16,7 @@ class AuthenticationService <<Service>> {
     validate(token: String): Username
     forceAuthentication(username: Username): Void
     ..
-    healthCheck(): Void
+    healthCheckError(): Option<String>
 }
 
 AuthenticationService --> AuthInfoRepository : "uses"

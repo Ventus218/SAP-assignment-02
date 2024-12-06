@@ -22,3 +22,5 @@ class EBikesServiceImpl(private val eBikesRepository: EBikesRepository)
 
   override def eBikes(): Iterable[EBike] =
     eBikesRepository.getAll()
+
+  def healthCheckError(): Option[String] = None

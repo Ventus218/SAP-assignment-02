@@ -6,7 +6,7 @@ class APIGatewayService <<Service>> {
     ..
     authenticateRequest(jwt: JWT): Future<>
     ..
-    healthCheck(): Void
+    healthCheckError(): Option<String>
 }
 
 note left of APIGatewayService

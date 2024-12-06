@@ -9,6 +9,10 @@ trait EBikesService:
 
   def eBikes(): Iterable[EBike]
 
-  def register(id: EBikeId, location: V2D, direction: V2D): Either[EBikeIdAlreadyInUse, EBike]
+  def register(
+      id: EBikeId,
+      location: V2D,
+      direction: V2D
+  ): Either[EBikeIdAlreadyInUse, EBike]
 
-  // TODO: healthCheck
+  def healthCheckError(): Option[String]

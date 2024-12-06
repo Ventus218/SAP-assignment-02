@@ -23,7 +23,7 @@ class UsersService <<Service>> {
     rechargeCredit(username: Username, rechargeAmount: Credit): Either<UserNotFound, Credit>
     users(): Iterable<User>
     ..
-    healthCheck(): Void
+    healthCheckError(): Option<String>
 }
 
 UsersService --> UsersRepository : "uses"

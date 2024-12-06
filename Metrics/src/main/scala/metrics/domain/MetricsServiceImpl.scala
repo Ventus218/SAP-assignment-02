@@ -4,7 +4,11 @@ import java.util.UUID
 import java.util.concurrent.TimeUnit
 import scala.concurrent.*
 import scala.concurrent.duration.FiniteDuration
+import scala.concurrent.duration.Duration
 import akka.actor.typed.ActorSystem
+import akka.http.scaladsl.Http
+import akka.http.scaladsl.model.*
+import akka.http.scaladsl.settings.ConnectionPoolSettings
 import metrics.ports.MetricsService
 import metrics.ports.persistence.*
 import metrics.ports.*
@@ -33,10 +37,14 @@ class MetricsServiceImpl(
       after,
       () =>
         (for
-          status <- Future {
-            Thread.sleep(5000);
-            Random.shuffle(MonitoredEndpointStatus.values.toList :+ null).head
-          }
+          res <- Http().singleRequest(
+            HttpRequest(uri = Uri(s"http://${endpoint.value}/healthCheck")),
+            settings =
+              ConnectionPoolSettings(as).withIdleTimeout(Duration.apply(2, "s"))
+          )
+          status = res.status.isSuccess match
+            case true  => Up
+            case false => Down
           _ = endpointsRepo.update(endpoint, e => e.copy(status = status)) match
             case Left(_)  => () // The endpoint monitoring was stopped
             case Right(_) => scheduleHealthcheck(monitoringPeriod, endpoint)

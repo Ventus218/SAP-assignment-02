@@ -20,7 +20,7 @@ class EBikesService <<Service>> {
     eBikes(): Iterable<EBike>
     register(eBikeId: EBikeId, location: V2D, direction: V2D): Either<EBikeIdAlreadyInUse, EBike>
     ..
-    healthCheck(): Void
+    healthCheckError(): Option<String>
 }
 
 EBikesService --> EBikesRepository : "uses"

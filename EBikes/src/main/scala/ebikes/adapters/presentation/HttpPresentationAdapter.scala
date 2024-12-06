@@ -4,6 +4,7 @@ import scala.concurrent.Future
 import akka.actor.typed.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.Http.ServerBinding
+import akka.http.scaladsl.model.HttpEntity
 import akka.http.scaladsl.model.StatusCodes.*
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
@@ -12,6 +13,7 @@ import spray.json.DefaultJsonProtocol.*
 import ebikes.domain.model.*
 import ebikes.domain.EBikesService
 import ebikes.adapters.presentation.dto.*
+import shared.adapters.presentation.HealthCheckError
 
 object HttpPresentationAdapter:
 
@@ -19,6 +21,7 @@ object HttpPresentationAdapter:
   given RootJsonFormat[EBikeId] = jsonFormat1(EBikeId.apply)
   given RootJsonFormat[EBike] = jsonFormat4(EBike.apply)
   given RootJsonFormat[RegisterEBikeDTO] = jsonFormat3(RegisterEBikeDTO.apply)
+  given RootJsonFormat[HealthCheckError] = jsonFormat1(HealthCheckError.apply)
 
   def startHttpServer(
       eBikesService: EBikesService,
@@ -26,24 +29,33 @@ object HttpPresentationAdapter:
       port: Int
   )(using ActorSystem[Any]): Future[ServerBinding] =
     val route =
-      pathPrefix("ebikes"):
-        concat(
-          (get & pathEnd):
-            complete(eBikesService.eBikes().toArray)
-          ,
-          (post & pathEnd):
-            entity(as[RegisterEBikeDTO]) { dto =>
-              eBikesService.register(dto.id, dto.location, dto.direction) match
-                case Left(value) =>
-                  complete(Conflict, "EBike id already in use")
-                case Right(value) => complete(value)
-            }
-          ,
-          path(Segment): eBikeId =>
-            get:
-              eBikesService.find(EBikeId(eBikeId)) match
-                case None        => complete(NotFound, "EBike not found")
-                case Some(value) => complete(value)
-        )
+      concat(
+        pathPrefix("ebikes"):
+          concat(
+            (get & pathEnd):
+              complete(eBikesService.eBikes().toArray)
+            ,
+            (post & pathEnd):
+              entity(as[RegisterEBikeDTO]) { dto =>
+                eBikesService
+                  .register(dto.id, dto.location, dto.direction) match
+                  case Left(value) =>
+                    complete(Conflict, "EBike id already in use")
+                  case Right(value) => complete(value)
+              }
+            ,
+            path(Segment): eBikeId =>
+              get:
+                eBikesService.find(EBikeId(eBikeId)) match
+                  case None        => complete(NotFound, "EBike not found")
+                  case Some(value) => complete(value)
+          )
+        ,
+        path("healthCheck"):
+          eBikesService.healthCheckError() match
+            case None => complete(OK, HttpEntity.Empty)
+            case Some(value) =>
+              complete(ServiceUnavailable, HealthCheckError(value))
+      )
 
     Http().newServerAt(host, port).bind(route)
