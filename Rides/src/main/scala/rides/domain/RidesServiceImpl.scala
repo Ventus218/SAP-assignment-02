@@ -75,3 +75,5 @@ class RidesServiceImpl(
       allEBikes <- eBikesService.eBikes()
       eBikesInUse = activeRides().map(_.eBikeId)
     yield (allEBikes.toSet -- eBikesInUse)
+
+  def healthCheckError(): Option[String] = None

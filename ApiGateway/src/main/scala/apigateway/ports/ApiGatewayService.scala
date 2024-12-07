@@ -13,3 +13,5 @@ trait ApiGatewayService:
   def eBikes_register(
       dto: RegisterEBikeDTO
   ): Future[Either[EBikeIdAlreadyInUse, EBike]]
+
+  def healthCheckError(): Option[String]

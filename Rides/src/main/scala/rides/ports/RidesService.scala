@@ -22,4 +22,4 @@ trait RidesService:
 
   def availableEBikes(): Future[Iterable[EBikeId]]
 
-  // TODO: healthCheck
+  def healthCheckError(): Option[String]

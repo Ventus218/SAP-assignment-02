@@ -13,3 +13,5 @@ class ApiGatewayServiceImpl(private val eBikesService: EBikesService)
     eBikes as eBikes_eBikes,
     register as eBikes_register
   }
+
+  def healthCheckError(): Option[String] = None

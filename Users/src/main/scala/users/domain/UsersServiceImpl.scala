@@ -30,3 +30,5 @@ class UsersServiceImpl(private val usersRepository: UsersRepository)
 
   override def users(): Iterable[User] =
     usersRepository.getAll()
+
+  override def healthCheckError(): Option[String] = None

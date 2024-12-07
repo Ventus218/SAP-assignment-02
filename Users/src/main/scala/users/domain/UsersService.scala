@@ -16,4 +16,4 @@ trait UsersService:
 
   def users(): Iterable[User]
 
-  // TODO: healthCheck
+  def healthCheckError(): Option[String]
