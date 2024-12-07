@@ -24,13 +24,13 @@ class UsersServiceAdapter implements UsersService {
 	private final RestClient restClient;
 
 	public UsersServiceAdapter(RestClient.Builder restClientBuilder) {
-		this.restClient = restClientBuilder.baseUrl("http://" + usersServiceAddress).build();
+		this.restClient = restClientBuilder.build();
 	}
 
 	public void registerUser(Username username) throws UserAlreadyRegisteredException, UsersServiceException {
 		try {
-			var result = this.restClient.post().uri(usersServiceAddress + "/users").body(username).retrieve()
-					.onStatus(status -> status.isSameCodeAs(HttpStatus.CONFLICT), (request, response) -> {
+			var result = this.restClient.post().uri(baseUrl() + "/users").body(username)
+					.retrieve().onStatus(status -> status.isSameCodeAs(HttpStatus.CONFLICT), (request, response) -> {
 					}).toBodilessEntity();
 			if (result.getStatusCode().isSameCodeAs(HttpStatus.CONFLICT)) {
 				throw new UserAlreadyRegisteredException();
@@ -40,4 +40,7 @@ class UsersServiceAdapter implements UsersService {
 		}
 	}
 
+	private String baseUrl() {
+		return "http://" + usersServiceAddress;
+	}
 }
