@@ -32,20 +32,28 @@ class FileSystemRepositoryAdapter[ID: ReadWriter, T: ReadWriter](
             exception
           );
 
+  private val transactionLock = java.util.concurrent.locks.ReentrantLock(true)
+
   private def getAllItems(): Seq[Item] =
-    this.synchronized:
-      read[Seq[Item]](String(Files.readAllBytes(file.toPath())))
+    read[Seq[Item]](String(Files.readAllBytes(file.toPath())))
 
   private def overwriteItems(items: Seq[Item]): Unit =
-    this.synchronized:
-      Files.write(file.toPath(), write(items).getBytes());
+    Files.write(file.toPath(), write(items).getBytes())
+
+  override def transaction[T](f: => T): T =
+    try {
+      transactionLock.lock()
+      f
+    } finally {
+      transactionLock.unlock()
+    }
 
   override def getAll(): Iterable[T] =
-    this.synchronized:
+    transaction:
       getAllItems().map(_.obj)
 
   override def insert(id: ID, entity: T): Either[DuplicateIdException, Unit] =
-    this.synchronized:
+    transaction:
       getAllItems().exists(_.id == id) match
         case true =>
           Left(
@@ -56,7 +64,7 @@ class FileSystemRepositoryAdapter[ID: ReadWriter, T: ReadWriter](
           Right(())
 
   override def delete(id: ID): Either[NotInRepositoryException, Unit] =
-    this.synchronized:
+    transaction:
       getAllItems().exists(_.id == id) match
         case false =>
           Left(
@@ -69,14 +77,14 @@ class FileSystemRepositoryAdapter[ID: ReadWriter, T: ReadWriter](
           Right(())
 
   override def find(id: ID): Option[T] =
-    this.synchronized:
+    transaction:
       getAllItems().find(_.id == id).map(_.obj)
 
   override def update(
       id: ID,
       f: T => T
   ): Either[NotInRepositoryException, T] =
-    this.synchronized:
+    transaction:
       find(id) match
         case None =>
           Left(

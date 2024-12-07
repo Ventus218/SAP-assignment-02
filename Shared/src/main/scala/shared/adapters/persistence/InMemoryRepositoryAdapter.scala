@@ -21,12 +21,21 @@ class InMemoryRepositoryAdapter[ID, T](
     .get
     .asInstanceOf[scala.collection.mutable.Map[String, T]]
 
+  private val transactionLock = java.util.concurrent.locks.ReentrantLock(true)
+  override def transaction[T](f: => T): T =
+    try {
+      transactionLock.lock()
+      f
+    } finally {
+      transactionLock.unlock()
+    }
+
   override def getAll(): Iterable[T] =
-    this.synchronized:
+    transaction:
       map.values
 
   override def insert(id: ID, entity: T): Either[DuplicateIdException, Unit] =
-    this.synchronized:
+    transaction:
       map.contains(id) match
         case true =>
           Left(
@@ -37,7 +46,7 @@ class InMemoryRepositoryAdapter[ID, T](
           Right(())
 
   override def update(id: ID, f: T => T): Either[NotInRepositoryException, T] =
-    this.synchronized:
+    transaction:
       map.updateWith(id)(_.map(f)) match
         case None =>
           Left(
@@ -48,11 +57,11 @@ class InMemoryRepositoryAdapter[ID, T](
         case Some(value) => Right(value)
 
   override def find(id: ID): Option[T] =
-    this.synchronized:
+    transaction:
       map.get(id)
 
   override def delete(id: ID): Either[NotInRepositoryException, Unit] =
-    this.synchronized:
+    transaction:
       map.remove(id) match
         case None =>
           Left(

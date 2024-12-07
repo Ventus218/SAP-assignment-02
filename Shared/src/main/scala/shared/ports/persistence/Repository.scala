@@ -4,6 +4,8 @@ import shared.ports.persistence.exceptions.*;
 
 trait Repository[ID, T] {
 
+  def transaction[T](f: => T): T
+
   def getAll(): Iterable[T]
 
   def insert(id: ID, entity: T): Either[DuplicateIdException, Unit]
