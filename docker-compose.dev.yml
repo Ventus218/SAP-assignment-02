@@ -1,25 +1,38 @@
+x-restart_policy: &restart_policy
+  restart: ${RESTART_POLICY?}
+
 services:
   api-gateway:
     ports:
       - 8080:8080
+    <<: *restart_policy
+
   ebikes:
     volumes:
       - ${HOME}/Desktop/EBikeApp/db:/data/db:rw
     ports:
       - 8081:8080
+    <<: *restart_policy
+
   users:
     volumes:
       - ${HOME}/Desktop/EBikeApp/db:/data/db:rw
     ports:
       - 8082:8080
+    <<: *restart_policy
+
   rides:
     volumes:
       - ${HOME}/Desktop/EBikeApp/db:/data/db:rw
     ports:
       - 8083:8080
+    <<: *restart_policy
+
   authentication:
     ports:
       - 8084:8080
+    <<: *restart_policy
+
   authentication-db:
     volumes:
       - ${HOME}/Desktop/EBikeApp/auth/mysql:/var/lib/mysql
@@ -28,3 +41,4 @@ services:
       - ${HOME}/Desktop/EBikeApp/db:/data/db:rw
     ports:
       - 8085:8080
+    <<: *restart_policy

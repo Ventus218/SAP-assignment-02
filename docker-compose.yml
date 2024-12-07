@@ -6,6 +6,16 @@ x-common_environment: &common_environment
   USERS_SERVICE_ADDRESS: users:8080
   RIDES_SERVICE_ADDRESS: rides:8080
 
+x-common_healthcheck: &common_healthcheck
+  healthcheck:
+    test: curl --fail localhost:8080/healthCheck || exit 1
+    start_period: 20s
+    start_interval: 1s
+    interval: 60s
+    timeout: 5s
+    retries: 2
+  restart: unless-stopped
+  
 services:
   api-gateway:
     build:
@@ -17,6 +27,7 @@ services:
       <<: *common_environment
     networks:
       - private_network
+    <<: *common_healthcheck
 
   authentication:
     build:
@@ -37,6 +48,7 @@ services:
     depends_on:
       authentication-db:
         condition: service_healthy
+    <<: *common_healthcheck
 
   authentication-db:
     image: mysql:latest
@@ -63,6 +75,14 @@ services:
       - private_network
     environment:
       <<: *common_environment
+    healthcheck:
+      test: curl --fail localhost:8080/metrics/counters/none || exit 1
+      start_period: 20s
+      start_interval: 1s
+      interval: 5s
+      timeout: 5s
+      retries: 2
+    restart: unless-stopped
 
   ebikes:
     build:
@@ -72,6 +92,7 @@ services:
       - private_network
     environment:
       <<: *common_environment
+    <<: *common_healthcheck
 
   users:
     build:
@@ -81,15 +102,17 @@ services:
       - private_network
     environment:
       <<: *common_environment
+    <<: *common_healthcheck
 
   rides:
     build:
       args:
         - executable=Rides/executable.jar
-    environment:
-      <<: *common_environment
     networks:
       - private_network
+    environment:
+      <<: *common_environment
+    <<: *common_healthcheck
 
 networks:
   private_network:
