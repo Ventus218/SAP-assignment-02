@@ -14,6 +14,7 @@ import ebikes.domain.model.*
 import ebikes.domain.EBikesService
 import ebikes.adapters.presentation.dto.*
 import shared.adapters.presentation.HealthCheckError
+import shared.ports.MetricsService
 
 object HttpPresentationAdapter:
 
@@ -23,14 +24,18 @@ object HttpPresentationAdapter:
   given RootJsonFormat[RegisterEBikeDTO] = jsonFormat3(RegisterEBikeDTO.apply)
   given RootJsonFormat[HealthCheckError] = jsonFormat1(HealthCheckError.apply)
 
+  private val metricsCounterName = "ebikes_service_requests"
+
   def startHttpServer(
       eBikesService: EBikesService,
       host: String,
-      port: Int
+      port: Int,
+      metricsService: MetricsService
   )(using ActorSystem[Any]): Future[ServerBinding] =
     val route =
       concat(
         pathPrefix("ebikes"):
+          metricsService.incrementCounterByOne(metricsCounterName)
           concat(
             (get & pathEnd):
               complete(eBikesService.eBikes().toArray)

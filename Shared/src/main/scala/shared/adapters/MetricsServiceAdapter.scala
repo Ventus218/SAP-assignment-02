@@ -11,10 +11,20 @@ class MetricsServiceAdapter(private val address: String) extends MetricsService:
   private val rescheduleDelayMillis: Long = 5000
 
   private case class RegisterDTO(value: String) derives ReadWriter
+  private case class IncrementCounterDTO(value: Long) derives ReadWriter
 
   lazy given executionContext: ExecutionContext = ExecutionContext.fromExecutor(
     java.util.concurrent.Executors.newVirtualThreadPerTaskExecutor()
   )
+
+  def incrementCounter(counterId: String, amount: Long): Future[Unit] =
+    for
+      res <- quickRequest
+        .post(uri"http://$address/metrics/counters/$counterId")
+        .body(write(IncrementCounterDTO(amount)))
+        .contentType("application/json")
+        .send(DefaultFutureBackend())
+    yield()
 
   def registerForHealthcheckMonitoring(selfAddress: String): Future[Unit] =
     (for

@@ -42,7 +42,7 @@ object Main extends App:
   val metricsService = MetricsServiceAdapter(metricsServiceAddress)
 
   HttpPresentationAdapter
-    .startHttpServer(ridesService, host, port)
+    .startHttpServer(ridesService, host, port, metricsService)
     .map(_ => println(s"Rides is listening on $host:$port"))
     .map(_ =>
       metricsService.registerForHealthcheckMonitoring(

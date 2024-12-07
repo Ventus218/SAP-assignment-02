@@ -23,7 +23,7 @@ object EBikes:
     val metricsService = MetricsServiceAdapter(metricsServiceAddress)
 
     HttpPresentationAdapter
-      .startHttpServer(eBikesService, host, port)
+      .startHttpServer(eBikesService, host, port, metricsService)
       .map(binding =>
         metricsService.registerForHealthcheckMonitoring(
           sys.env.get("EBIKES_SERVICE_ADDRESS").get

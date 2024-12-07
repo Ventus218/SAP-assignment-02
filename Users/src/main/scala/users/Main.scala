@@ -33,7 +33,7 @@ object Main extends App:
   yield (portInt)).getOrElse(8080)
 
   HttpPresentationAdapter
-    .startHttpServer(usersService, host, port)
+    .startHttpServer(usersService, host, port, metricsService)
     .map(_ => println(s"Users is listening on $host:$port"))
     .map(_ =>
       metricsService.registerForHealthcheckMonitoring(

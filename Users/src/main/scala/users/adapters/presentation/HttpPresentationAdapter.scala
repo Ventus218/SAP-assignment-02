@@ -11,6 +11,7 @@ import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
 import spray.json.RootJsonFormat
 import spray.json.DefaultJsonProtocol.*
 import shared.adapters.presentation.HealthCheckError
+import shared.ports.MetricsService
 import users.domain.model.*
 import users.domain.UsersService
 
@@ -21,14 +22,18 @@ object HttpPresentationAdapter:
   given RootJsonFormat[User] = jsonFormat2(User.apply)
   given RootJsonFormat[HealthCheckError] = jsonFormat1(HealthCheckError.apply)
 
+  private val metricsCounterName = "users_service_requests"
+
   def startHttpServer(
       usersService: UsersService,
       host: String,
-      port: Int
+      port: Int,
+      metricsService: MetricsService
   )(using ActorSystem[Any]): Future[ServerBinding] =
     val route =
       concat(
         pathPrefix("users"):
+          metricsService.incrementCounterByOne(metricsCounterName)
           concat(
             (get & pathEnd):
               complete(usersService.users().toArray)

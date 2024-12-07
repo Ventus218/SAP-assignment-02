@@ -32,7 +32,7 @@ object Main extends App:
   val metricsService = MetricsServiceAdapter(metricsServiceAddress)
 
   HttpPresentationAdapter
-    .startHttpServer(service, host, port)
+    .startHttpServer(service, host, port, metricsService)
     .map(_ => println(s"APIGateway is listening on $host:$port"))
     .map(_ =>
       metricsService.registerForHealthcheckMonitoring(
