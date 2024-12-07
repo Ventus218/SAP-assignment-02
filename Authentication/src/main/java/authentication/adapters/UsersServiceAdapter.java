@@ -11,20 +11,20 @@ import authentication.domain.model.*;
 @Service
 class UsersServiceAdapter implements UsersService {
 
-	@Value("${services.users.address}")
+	@Value("${users.service.address}")
 	private String usersServiceAddress;
 
 	@PostConstruct
 	private void validateInjectedValues() {
 		if (usersServiceAddress.isBlank()) {
-			throw new IllegalArgumentException("jwt.signing.secret can't be blank");
+			throw new IllegalArgumentException("users.service.address can't be blank");
 		}
 	}
 
 	private final RestClient restClient;
 
 	public UsersServiceAdapter(RestClient.Builder restClientBuilder) {
-		this.restClient = restClientBuilder.baseUrl(usersServiceAddress).build();
+		this.restClient = restClientBuilder.baseUrl("http://" + usersServiceAddress).build();
 	}
 
 	public void registerUser(Username username) throws UserAlreadyRegisteredException, UsersServiceException {

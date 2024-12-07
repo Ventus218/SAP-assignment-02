@@ -1,3 +1,11 @@
+x-common_environment: &common_environment
+  APIGATEWAY_SERVICE_ADDRESS: api-gateway:8080
+  AUTHENTICATION_SERVICE_ADDRESS: authentication:8080
+  METRICS_SERVICE_ADDRESS: metrics:8080
+  EBIKES_SERVICE_ADDRESS: ebikes:8080
+  USERS_SERVICE_ADDRESS: users:8080
+  RIDES_SERVICE_ADDRESS: rides:8080
+
 services:
   api-gateway:
     build:
@@ -6,9 +14,10 @@ services:
     ports:
       - 8080:8080
     environment:
-      EBIKES_SERVICE_ADDRESS: ebikes:8080
+      <<: *common_environment
     networks:
       - private_network
+
   authentication:
     build:
       args:
@@ -17,7 +26,7 @@ services:
       - private_network
       - authentication_network
     environment:
-      SERVICES_USERS_ADDRESS: http://users:8080
+      <<: *common_environment
       JWT_SIGNING_SECRET: ${JWT_SIGNING_SECRET?}
       JWT_EXPIRATION_SECONDS: 900 # 15 minutes
       MYSQL_HOST: authentication-db
@@ -28,6 +37,7 @@ services:
     depends_on:
       authentication-db:
         condition: service_healthy
+
   authentication-db:
     image: mysql:latest
     environment:
@@ -39,36 +49,45 @@ services:
       - authentication_network
     healthcheck:
       test: mysql -u$$MYSQL_USER -p$$MYSQL_PASSWORD --execute "SHOW DATABASES;"
-      start_period: 20s 
+      start_period: 20s
       start_interval: 1s
       interval: 60s
       timeout: 2s
       retries: 5
+
   metrics:
     build:
       args:
         - executable=Metrics/executable.jar
     networks:
       - private_network
+    environment:
+      <<: *common_environment
+
   ebikes:
     build:
       args:
         - executable=EBikes/executable.jar
     networks:
       - private_network
+    environment:
+      <<: *common_environment
+
   users:
     build:
       args:
         - executable=Users/executable.jar
     networks:
       - private_network
+    environment:
+      <<: *common_environment
+
   rides:
     build:
       args:
         - executable=Rides/executable.jar
     environment:
-      EBIKES_SERVICE_ADDRESS: ebikes:8080
-      USERS_SERVICE_ADDRESS: users:8080
+      <<: *common_environment
     networks:
       - private_network
 
