@@ -47,7 +47,8 @@ public class HttpController {
 			@PathVariable("username") String username) throws UserNotFoundException, BadAuthorizationHeaderException,
 			SessionExpiredException, InvalidTokenException {
 		incrementMetricsCounterByOne();
-		authenticationService.forceAuthentication(new Username(username));
+		var token = extractJwtToken(bearerToken);
+		authenticationService.forceAuthentication(token, new Username(username));
 	}
 
 	@GetMapping(BASE_PATH + "/validate")
