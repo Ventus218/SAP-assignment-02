@@ -14,4 +14,9 @@ object Marshalling:
   given RootJsonFormat[V2D] = jsonFormat2(V2D.apply)
   given RootJsonFormat[EBikeId] = jsonFormat1(EBikeId.apply)
   given RootJsonFormat[EBike] = jsonFormat4(EBike.apply)
+  given RootJsonFormat[Username] = jsonFormat1(Username.apply)
   given RootJsonFormat[RegisterEBikeDTO] = jsonFormat3(RegisterEBikeDTO.apply)
+  given RootJsonFormat[RegisterUserDTO] = jsonFormat2(RegisterUserDTO.apply)
+  given RootJsonFormat[AuthenticateUserDTO] = jsonFormat1(
+    AuthenticateUserDTO.apply
+  )

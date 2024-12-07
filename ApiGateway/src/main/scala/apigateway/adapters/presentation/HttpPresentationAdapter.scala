@@ -10,8 +10,9 @@ import akka.http.scaladsl.server.Directives._
 import shared.adapters.presentation.HealthCheckError
 import shared.ports.MetricsService
 import apigateway.domain.model.*
-import apigateway.ports.ApiGatewayService
+import apigateway.ports.*
 import apigateway.adapters.Marshalling.{*, given}
+import apigateway.ports.AuthenticationService.*
 
 object HttpPresentationAdapter:
 
@@ -52,9 +53,72 @@ object HttpPresentationAdapter:
                   case Some(value) => complete(value)
         )
 
+    lazy val authenticationRoutes =
+      pathPrefix("authentication"):
+        incrementMetricsCounter()
+        concat(
+          (path("register") & post):
+            entity(as[RegisterUserDTO]): dto =>
+              onSuccess(
+                apiGatewayService
+                  .authentication_register(dto)
+              ):
+                _ match
+                  case Left((UserAlreadyExists(username))) =>
+                    complete(Conflict, s"User ${username.value} already exists")
+                  case Left((SomethingWentWrong(message))) =>
+                    complete(InternalServerError, message)
+                  case Right(token) => complete(token)
+          ,
+          pathPrefix(Segment): segment =>
+            val username = Username(segment)
+            concat(
+              (path("authenticate") & post):
+                entity(as[AuthenticateUserDTO]): dto =>
+                  onSuccess(
+                    apiGatewayService
+                      .authentication_authenticate(username, dto)
+                  ):
+                    _ match
+                      case Left(UserNotFound(username)) =>
+                        complete(NotFound, s"User $username not found")
+                      case Left(UnauthorizedError(message)) =>
+                        complete(Unauthorized, message)
+                      case Right(token) => complete(token)
+              ,
+              (path("forceAuthentication") & post):
+                headerValueByName("Authorization"): bearerToken =>
+                  onSuccess(
+                    apiGatewayService.authentication_forceAuthentication(
+                      bearerToken,
+                      username
+                    )
+                  ):
+                    _ match
+                      case Left(BadAuthorizationHeader()) =>
+                        complete(BadRequest, "Bad Authorization header format")
+                      case Left(UserNotFound(username)) =>
+                        complete(NotFound, s"User $username not found")
+                      case Left(UnauthorizedError(message)) =>
+                        complete(Unauthorized, message)
+                      case Right(_) => complete(HttpEntity.Empty)
+            )
+          ,
+          (path("refresh") & post):
+            headerValueByName("Authorization"): bearerToken =>
+              onSuccess(apiGatewayService.authentication_refresh(bearerToken)):
+                _ match
+                  case Left(BadAuthorizationHeader()) =>
+                    complete(BadRequest, "Bad Authorization header format")
+                  case Left(UnauthorizedError(message)) =>
+                    complete(Unauthorized, message)
+                  case Right(token) => complete(token)
+        )
+
     val route =
       concat(
         ebikesRoutes,
+        authenticationRoutes,
         path("healthCheck"):
           apiGatewayService.healthCheckError() match
             case None => complete(OK, HttpEntity.Empty)

@@ -80,6 +80,7 @@ lazy val apiGateway = project
     name := "API Gateway",
     version := "0.1.0",
     akkaHttpSettings,
+    libraryDependencies += "com.softwaremill.sttp.client4" %% "core" % "4.0.0-M19", // for sttp
     assembly / assemblyOutputPath := file("./ApiGateway/executable.jar")
   )
   .dependsOn(shared)

@@ -25,7 +25,12 @@ object Main extends App:
   val eBikesServiceAddress =
     sys.env.get("EBIKES_SERVICE_ADDRESS").getOrElse("localhost:8080")
   val eBikesService = EBikesServiceAdapter(eBikesServiceAddress)
-  val service = ApiGatewayServiceImpl(eBikesService)
+  val authenticationServiceAddress =
+    sys.env.get("AUTHENTICATION_SERVICE_ADDRESS").getOrElse("localhost:8080")
+  val authenticationService = AuthenticationServiceAdapter(
+    authenticationServiceAddress
+  )
+  val service = ApiGatewayServiceImpl(eBikesService, authenticationService)
 
   val metricsServiceAddress =
     sys.env.get("METRICS_SERVICE_ADDRESS").getOrElse("localhost:8080")
