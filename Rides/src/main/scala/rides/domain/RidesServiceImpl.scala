@@ -18,62 +18,79 @@ class RidesServiceImpl(
     executionContext: ExecutionContext
 ) extends RidesService:
 
+  private val transactionLock = java.util.concurrent.locks.ReentrantLock(true)
+
+  def transaction[T](f: => T): T =
+    try {
+      transactionLock.lock()
+      f
+    } finally {
+      transactionLock.unlock()
+    }
+
   def find(id: RideId): Option[Ride] =
-    ridesRepository.find(id)
+    transaction:
+      ridesRepository.find(id)
 
   def activeRides(): Iterable[Ride] =
-    ridesRepository.getAll().filter(_.end.isEmpty)
+    transaction:
+      ridesRepository.getAll().filter(_.end.isEmpty)
 
   def startRide(
       eBikeId: EBikeId,
       username: Username
   ): Future[Either[StartRideError, Ride]] =
-    val activeRides = this.activeRides()
+    transaction:
+      val activeRides = this.activeRides()
 
-    lazy val bikeIsFree = !activeRides.exists(_.eBikeId == eBikeId)
-    lazy val userIsFree = !activeRides.exists(_.username == username)
-    val checkEBikeAndUserFree = for
-      _ <- Either.cond(bikeIsFree, (), EBikeAlreadyOnARide(eBikeId))
-      _ <- Either.cond(userIsFree, (), UserAlreadyOnARide(username))
-    yield ()
+      lazy val bikeIsFree = !activeRides.exists(_.eBikeId == eBikeId)
+      lazy val userIsFree = !activeRides.exists(_.username == username)
+      val checkEBikeAndUserFree = for
+        _ <- Either.cond(bikeIsFree, (), EBikeAlreadyOnARide(eBikeId))
+        _ <- Either.cond(userIsFree, (), UserAlreadyOnARide(username))
+      yield ()
 
-    (checkEBikeAndUserFree match
-      case Left(error) => Future(Left(error))
-      case Right(_) =>
-        for
-          eBikeOpt <- eBikesService.find(eBikeId)
-          userExist <- usersService.exist(username)
-          eBikeAndUserExist =
-            for
-              _ <- eBikeOpt.toRight(EBikeDoesNotExist(eBikeId))
-              _ <- Either.cond(userExist, (), UserDoesNotExist(username))
-            yield ()
+      (checkEBikeAndUserFree match
+        case Left(error) => Future(Left(error))
+        case Right(_) =>
+          for
+            eBikeOpt <- eBikesService.find(eBikeId)
+            userExist <- usersService.exist(username)
+            eBikeAndUserExist =
+              for
+                _ <- eBikeOpt.toRight(EBikeDoesNotExist(eBikeId))
+                _ <- Either.cond(userExist, (), UserDoesNotExist(username))
+              yield ()
 
-          ride = eBikeAndUserExist match
-            case Left(error) => Left(error)
-            case Right(_) =>
-              val id = RideId(UUID.randomUUID().toString())
-              val ride = Ride(id, eBikeId, username, Date(), None)
-              ridesRepository.insert(id, ride) match
-                case Left(value)  => throw Exception("UUID collision... WTF")
-                case Right(value) => Right(ride)
-        yield (ride)
-    ).recover({ case e: Exception =>
-      Left(FailureInOtherService())
-    })
+            ride = eBikeAndUserExist match
+              case Left(error) => Left(error)
+              case Right(_) =>
+                val id = RideId(UUID.randomUUID().toString())
+                val ride = Ride(id, eBikeId, username, Date(), None)
+                ridesRepository.insert(id, ride) match
+                  case Left(value)  => throw Exception("UUID collision... WTF")
+                  case Right(value) => Right(ride)
+          yield (ride)
+      ).recover({ case e: Exception =>
+        Left(FailureInOtherService())
+      })
 
   def endRide(id: RideId): Either[RideNotFound, Ride] =
-    ridesRepository.update(
-      id,
-      r => r.copy(end = r.end.orElse(Some(Date())))
-    ) match
-      case Left(value)  => Left(RideNotFound(id))
-      case Right(value) => Right(value)
+    transaction:
+      ridesRepository.update(
+        id,
+        r => r.copy(end = r.end.orElse(Some(Date())))
+      ) match
+        case Left(value)  => Left(RideNotFound(id))
+        case Right(value) => Right(value)
 
   def availableEBikes(): Future[Iterable[EBikeId]] =
-    for
-      allEBikes <- eBikesService.eBikes()
-      eBikesInUse = activeRides().map(_.eBikeId)
-    yield (allEBikes.toSet -- eBikesInUse)
+    transaction:
+      for
+        allEBikes <- eBikesService.eBikes()
+        eBikesInUse = activeRides().map(_.eBikeId)
+      yield (allEBikes.toSet -- eBikesInUse)
 
-  def healthCheckError(): Option[String] = None
+  def healthCheckError(): Option[String] =
+    transaction:
+      None
