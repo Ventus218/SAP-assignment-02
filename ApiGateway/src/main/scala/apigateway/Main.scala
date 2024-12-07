@@ -7,6 +7,7 @@ import akka.actor.typed.scaladsl.Behaviors
 import apigateway.domain.ApiGatewayServiceImpl
 import apigateway.adapters.*
 import apigateway.adapters.presentation.*
+import shared.adapters.MetricsServiceAdapter
 
 object Main extends App:
   given actorSystem: ActorSystem[Any] =
@@ -24,9 +25,17 @@ object Main extends App:
   val eBikesServiceAddress =
     sys.env.get("EBIKES_SERVICE_ADDRESS").getOrElse("localhost:8080")
   val eBikesService = EBikesServiceAdapter(eBikesServiceAddress)
-
   val service = ApiGatewayServiceImpl(eBikesService)
+
+  val metricsServiceAddress =
+    sys.env.get("METRICS_SERVICE_ADDRESS").getOrElse("localhost:8080")
+  val metricsService = MetricsServiceAdapter(metricsServiceAddress)
 
   HttpPresentationAdapter
     .startHttpServer(service, host, port)
     .map(_ => println(s"APIGateway is listening on $host:$port"))
+    .map(_ =>
+      metricsService.registerForHealthcheckMonitoring(
+        sys.env.get("APIGATEWAY_SERVICE_ADDRESS").get
+      )
+    )

@@ -13,6 +13,7 @@ import rides.adapters.presentation.HttpPresentationAdapter
 import rides.adapters.ebikesservice.EBikesServiceAdapter
 import rides.adapters.usersservice.UsersServiceAdapter
 import rides.adapters.persistence.RidesFileSystemRepositoryAdapter
+import shared.adapters.MetricsServiceAdapter
 
 object Main extends App:
   given actorSystem: ActorSystem[Any] =
@@ -36,6 +37,15 @@ object Main extends App:
     })
   yield (portInt)).getOrElse(8080)
 
+  val metricsServiceAddress =
+    sys.env.get("METRICS_SERVICE_ADDRESS").getOrElse("localhost:8080")
+  val metricsService = MetricsServiceAdapter(metricsServiceAddress)
+
   HttpPresentationAdapter
     .startHttpServer(ridesService, host, port)
     .map(_ => println(s"Rides is listening on $host:$port"))
+    .map(_ =>
+      metricsService.registerForHealthcheckMonitoring(
+        sys.env.get("RIDES_SERVICE_ADDRESS").get
+      )
+    )
