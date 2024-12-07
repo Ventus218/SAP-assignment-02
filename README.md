@@ -254,4 +254,3 @@ It is required to provide at least one test for each layer in the testing pyrami
 |Unit       |Very high  |Low        |[EBikesServiceTests](./EBikes/src/test/scala/ebikes/domain/EBikesServiceTests.scala), [V2DTests](./EBikes/src/test/scala/ebikes/domain/model/V2DTests.scala)|
 
 <!-- TODO talk about authorization issues -->
-<!-- Configuration secrets -->
