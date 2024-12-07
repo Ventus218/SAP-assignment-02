@@ -70,6 +70,7 @@ lazy val shared = project
   .settings(
     name := "Shared",
     version := "0.1.0",
+    libraryDependencies += "com.softwaremill.sttp.client4" %% "core" % "4.0.0-M19", // for sttp
     libraryDependencies += "com.lihaoyi" %% "upickle" % "4.0.2"
   )
 
@@ -81,6 +82,7 @@ lazy val apiGateway = project
     akkaHttpSettings,
     assembly / assemblyOutputPath := file("./ApiGateway/executable.jar")
   )
+  .dependsOn(shared)
 
 lazy val authentication = project
   .in(file("Authentication"))
