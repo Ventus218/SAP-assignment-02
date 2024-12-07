@@ -3,7 +3,7 @@ package authentication.adapters.presentation;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import authentication.ports.AuthenticationService;
+import authentication.ports.*;
 import authentication.domain.model.*;
 import authentication.domain.exceptions.*;
 import authentication.adapters.presentation.exceptions.*;
@@ -12,25 +12,32 @@ import authentication.adapters.presentation.exceptions.*;
 public class HttpController {
 
 	private final String BASE_PATH = "/authentication";
+	private final String METRICS_COUNTER_NAME = "authentication_service_requests";
 
 	@Autowired
 	AuthenticationService authenticationService;
 
+	@Autowired
+	MetricsService metricsService;
+
 	@PostMapping(BASE_PATH + "/register")
 	public String register(@RequestBody RegisterDTO dto)
 			throws UserAlreadyExistsException, SomethingWentWrongException {
+		incrementMetricsCounterByOne();
 		return authenticationService.register(dto.username(), dto.password());
 	}
 
 	@PostMapping(BASE_PATH + "/{username}/authenticate")
 	public String authenticate(@PathVariable("username") String username, @RequestBody AuthenticateDTO dto)
 			throws UserNotFoundException, WrongCredentialsException {
+		incrementMetricsCounterByOne();
 		return authenticationService.authenticate(new Username(username), dto.password());
 	}
 
 	@PostMapping(BASE_PATH + "/refresh")
 	public String refresh(@RequestHeader("Authorization") String bearerToken) throws BadAuthorizationHeaderException,
 			PasswordAuthenticationRequiredException, SessionExpiredException, InvalidTokenException {
+		incrementMetricsCounterByOne();
 		var token = extractJwtToken(bearerToken);
 		return authenticationService.refresh(token);
 	}
@@ -38,12 +45,14 @@ public class HttpController {
 	@PostMapping(BASE_PATH + "/{username}/forceAuthentication")
 	public void forceAuthentication(@RequestHeader("Authorization") String bearerToken,
 			@PathVariable("username") String username) throws UserNotFoundException {
+		incrementMetricsCounterByOne();
 		authenticationService.forceAuthentication(new Username(username));
 	}
 
 	@GetMapping(BASE_PATH + "/validate")
 	public boolean validate(@RequestHeader("Authorization") String bearerToken)
 			throws BadAuthorizationHeaderException, SessionExpiredException, InvalidTokenException {
+		incrementMetricsCounterByOne();
 		var token = extractJwtToken(bearerToken);
 		authenticationService.validate(token);
 		return true;
@@ -65,6 +74,10 @@ public class HttpController {
 			throw new BadAuthorizationHeaderException();
 		}
 		return bearerToken.substring(7);
+	}
+
+	private void incrementMetricsCounterByOne() {
+		metricsService.incrementCounter(METRICS_COUNTER_NAME, 1);
 	}
 
 	@ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR, reason = "Something went wrong.")
