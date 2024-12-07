@@ -126,8 +126,10 @@ class AuthenticationServiceImpl implements AuthenticationService {
 		}
 	}
 
-	public void forceAuthentication(Username username) throws UserNotFoundException {
+	public void forceAuthentication(String jwt, Username username)
+			throws UserNotFoundException, SessionExpiredException, InvalidTokenException {
 		try {
+			validate(jwt);
 			authInfoRepository.forcePasswordAuthentication(username);
 		} catch (AuthInfoNotExistsException e) {
 			throw new UserNotFoundException();

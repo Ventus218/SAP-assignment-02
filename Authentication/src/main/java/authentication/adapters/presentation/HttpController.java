@@ -44,7 +44,8 @@ public class HttpController {
 
 	@PostMapping(BASE_PATH + "/{username}/forceAuthentication")
 	public void forceAuthentication(@RequestHeader("Authorization") String bearerToken,
-			@PathVariable("username") String username) throws UserNotFoundException {
+			@PathVariable("username") String username) throws UserNotFoundException, BadAuthorizationHeaderException,
+			SessionExpiredException, InvalidTokenException {
 		incrementMetricsCounterByOne();
 		authenticationService.forceAuthentication(new Username(username));
 	}
