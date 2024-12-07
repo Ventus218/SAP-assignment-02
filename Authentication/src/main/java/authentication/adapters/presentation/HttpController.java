@@ -6,45 +6,58 @@ import org.springframework.beans.factory.annotation.Autowired;
 import authentication.ports.AuthenticationService;
 import authentication.domain.model.*;
 import authentication.domain.exceptions.*;
+import authentication.adapters.presentation.exceptions.*;
 
 @RestController()
-@RequestMapping("/authentication")
 public class HttpController {
+
+	private final String BASE_PATH = "/authentication";
 
 	@Autowired
 	AuthenticationService authenticationService;
 
-	@PostMapping("/register")
+	@PostMapping(BASE_PATH + "/register")
 	public String register(@RequestBody RegisterDTO dto)
 			throws UserAlreadyExistsException, SomethingWentWrongException {
 		return authenticationService.register(dto.username(), dto.password());
 	}
 
-	@PostMapping("/{username}/authenticate")
+	@PostMapping(BASE_PATH + "/{username}/authenticate")
 	public String authenticate(@PathVariable("username") String username, @RequestBody AuthenticateDTO dto)
 			throws UserNotFoundException, WrongCredentialsException {
 		return authenticationService.authenticate(new Username(username), dto.password());
 	}
 
-	@PostMapping("/refresh")
+	@PostMapping(BASE_PATH + "/refresh")
 	public String refresh(@RequestHeader("Authorization") String bearerToken) throws BadAuthorizationHeaderException,
 			PasswordAuthenticationRequiredException, SessionExpiredException, InvalidTokenException {
 		var token = extractJwtToken(bearerToken);
 		return authenticationService.refresh(token);
 	}
 
-	@PostMapping("/{username}/forceAuthentication")
+	@PostMapping(BASE_PATH + "/{username}/forceAuthentication")
 	public void forceAuthentication(@RequestHeader("Authorization") String bearerToken,
 			@PathVariable("username") String username) throws UserNotFoundException {
 		authenticationService.forceAuthentication(new Username(username));
 	}
 
-	@GetMapping("/validate")
+	@GetMapping(BASE_PATH + "/validate")
 	public boolean validate(@RequestHeader("Authorization") String bearerToken)
 			throws BadAuthorizationHeaderException, SessionExpiredException, InvalidTokenException {
 		var token = extractJwtToken(bearerToken);
 		authenticationService.validate(token);
 		return true;
+	}
+
+	@GetMapping("healthCheck")
+	public void healthCheck() throws HealthCheckError {
+		var errorOpt = authenticationService.healthCheckError();
+		if (errorOpt.isPresent()) {
+			var error = errorOpt.get();
+			throw new HealthCheckError();
+		} else {
+			return;
+		}
 	}
 
 	private String extractJwtToken(String bearerToken) throws BadAuthorizationHeaderException {
@@ -92,5 +105,10 @@ public class HttpController {
 	@ResponseStatus(value = HttpStatus.UNAUTHORIZED, reason = "Invalid credentials. Please check your username and password and try again.")
 	@ExceptionHandler(WrongCredentialsException.class)
 	public void wrongCredentialsExceptionHandler() {
+	}
+
+	@ResponseStatus(value = HttpStatus.SERVICE_UNAVAILABLE, reason = "Healthcheck failed")
+	@ExceptionHandler(HealthCheckError.class)
+	public void healthCheckErrorExceptionHandler() {
 	}
 }

@@ -17,5 +17,5 @@ public interface AuthenticationService {
 
 	public void forceAuthentication(Username username) throws UserNotFoundException;
 
-	// TODO: healthcheck
+	public Optional<String> healthCheckError();
 }

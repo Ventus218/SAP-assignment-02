@@ -140,4 +140,7 @@ class AuthenticationServiceImpl implements AuthenticationService {
 				.withExpiresAt(now.plus(expirationDuration())).sign(algorithm());
 	}
 
+	public Optional<String> healthCheckError() {
+		return Optional.empty();
+	}
 }
