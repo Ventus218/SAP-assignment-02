@@ -19,7 +19,12 @@ object Main extends App:
       sys.error("PORT must be an integer"); None
     })
   yield (portInt)).getOrElse(8080)
-  
+
+  val metricsServiceAddress =
+    sys.env.get("METRICS_SERVICE_ADDRESS").getOrElse("localhost:8080")
+
+  val ebikesServiceAddress = sys.env.get("EBIKES_SERVICE_ADDRESS").get
+
   EBikes
-    .run(dbDir, host, port)
+    .run(dbDir, host, port, ebikesServiceAddress, metricsServiceAddress)
     .map(_ => println(s"EBikes is listening on $host:$port"))

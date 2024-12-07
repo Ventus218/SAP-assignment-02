@@ -11,22 +11,24 @@ import akka.http.scaladsl.Http.ServerBinding
 import shared.adapters.MetricsServiceAdapter
 
 object EBikes:
-  def run(dbDir: File, host: String, port: Int)(using
+  def run(
+      dbDir: File,
+      host: String,
+      port: Int,
+      eBikesServiceAddress: String,
+      metricsServiceAddress: String
+  )(using
       ActorSystem[Any]
   ): Future[ServerBinding] =
     val db = FileSystemDatabaseImpl(dbDir)
     val adapter = EBikesFileSystemRepositoryAdapter(db)
     val eBikesService = EBikesServiceImpl(adapter)
 
-    val metricsServiceAddress =
-      sys.env.get("METRICS_SERVICE_ADDRESS").getOrElse("localhost:8080")
     val metricsService = MetricsServiceAdapter(metricsServiceAddress)
 
     HttpPresentationAdapter
       .startHttpServer(eBikesService, host, port, metricsService)
       .map(binding =>
-        metricsService.registerForHealthcheckMonitoring(
-          sys.env.get("EBIKES_SERVICE_ADDRESS").get
-        )
+        metricsService.registerForHealthcheckMonitoring(eBikesServiceAddress)
         binding
       )(using summon[ActorSystem[Any]].executionContext)

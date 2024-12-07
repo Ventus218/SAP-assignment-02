@@ -18,6 +18,7 @@ import ebikes.domain.EBikesService
 import ebikes.domain.errors.EBikeIdAlreadyInUse
 import ebikes.adapters.presentation.HttpPresentationAdapter.{*, given}
 import ebikes.adapters.presentation.dto.RegisterEBikeDTO
+import shared.ports.MetricsService
 
 class HttpPresentationAdapterTests extends AnyFlatSpec:
   "GET /ebikes" should "return all ebikes from the service" in new MockServiceEnv:
@@ -110,9 +111,16 @@ class HttpPresentationAdapterTests extends AnyFlatSpec:
 
       override def healthCheckError(): Option[String] = None
 
+    val stubMetricsService = new MetricsService {
+      def incrementCounter(counterId: String, amount: Long): Future[Unit] =
+        Future.unit
+      def registerForHealthcheckMonitoring(selfAddress: String): Future[Unit] =
+        Future.unit
+    }
+
     val timeout = Duration(2, "second")
     val serverBinding = Await.result(
-      startHttpServer(service, "localhost", 0),
+      startHttpServer(service, "localhost", 0, stubMetricsService),
       atMost = timeout
     )
     val uri = s"http://${serverBinding.localAddress

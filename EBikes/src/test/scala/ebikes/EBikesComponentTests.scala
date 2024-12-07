@@ -34,7 +34,16 @@ class EBikesComponentTests extends AnyFlatSpec with BeforeAndAfterEach:
   override protected def beforeEach(): Unit =
     val tempDir = File.temporaryDirectory().get()
     serverBinding = Some(
-      Await.result(EBikes.run(tempDir.toJava, "localhost", 0), timeout)
+      Await.result(
+        EBikes.run(
+          tempDir.toJava,
+          "localhost",
+          0,
+          "localhost:8080",
+          "localhost:8081"
+        ),
+        timeout
+      )
     )
 
   override protected def afterEach(): Unit =
