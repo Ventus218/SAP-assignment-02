@@ -16,27 +16,26 @@ class EBikesServiceAdapter(private val address: String)(using
 
   given ExecutionContextExecutor = actorSystem.executionContext
 
-  private case class EBikeIdWrapper(id: EBikeId)
-  private given RootJsonFormat[EBikeIdWrapper] = jsonFormat1(
-    EBikeIdWrapper.apply
-  )
+  private given RootJsonFormat[EBikeId] = jsonFormat1(EBikeId.apply)
+  private given RootJsonFormat[V2D] = jsonFormat2(V2D.apply)
+  private given RootJsonFormat[EBike] = jsonFormat4(EBike.apply)
 
   private val ebikesEndpoint = s"http://$address/ebikes"
 
-  override def find(id: EBikeId): Future[Option[EBikeId]] =
+  override def find(id: EBikeId): Future[Option[EBike]] =
     for
       res <- Http().singleRequest(
         HttpRequest(uri = s"$ebikesEndpoint/${id.value}")
       )
       bike <- res.status match
         case StatusCodes.NotFound => Future(None)
-        case _ => Unmarshal(res).to[EBikeIdWrapper].map(Some(_))
-    yield bike.map(_.id)
+        case _                    => Unmarshal(res).to[EBike].map(Some(_))
+    yield bike
 
   override def eBikes(): Future[Iterable[EBikeId]] =
     for
       res <- Http().singleRequest(
         HttpRequest(uri = ebikesEndpoint)
       )
-      bikes <- Unmarshal(res).to[Array[EBikeIdWrapper]]
+      bikes <- Unmarshal(res).to[Array[EBike]]
     yield bikes.map(_.id)
