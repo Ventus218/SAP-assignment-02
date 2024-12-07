@@ -144,7 +144,7 @@ This is by far not a much secure solution but for the purpose of this project it
 
 The EBikes microservice and the Users microservice are both built follwing the hexagonal architecture.
 
-They don't depend on any other microservice.
+They don't depend on any other microservice (except the Metrics microservice but they can work perfectly even it that's down).
 
 ![EBikes microservice components diagram](./doc/diagrams/ebikes-components.png)
 ![EBikes microservice domain model](./doc/diagrams/ebikes-microservice-domain-model.png)
