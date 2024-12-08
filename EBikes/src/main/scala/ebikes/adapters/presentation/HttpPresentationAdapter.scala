@@ -22,6 +22,9 @@ object HttpPresentationAdapter:
   given RootJsonFormat[EBikeId] = jsonFormat1(EBikeId.apply)
   given RootJsonFormat[EBike] = jsonFormat4(EBike.apply)
   given RootJsonFormat[RegisterEBikeDTO] = jsonFormat3(RegisterEBikeDTO.apply)
+  given RootJsonFormat[UpdateEBikePhisicalDataDTO] = jsonFormat3(
+    UpdateEBikePhisicalDataDTO.apply
+  )
   given RootJsonFormat[HealthCheckError] = jsonFormat1(HealthCheckError.apply)
 
   private val metricsCounterName = "ebikes_service_requests"
@@ -49,11 +52,26 @@ object HttpPresentationAdapter:
                   case Right(value) => complete(value)
               }
             ,
-            path(Segment): eBikeId =>
-              get:
-                eBikesService.find(EBikeId(eBikeId)) match
-                  case None        => complete(NotFound, "EBike not found")
-                  case Some(value) => complete(value)
+            pathPrefix(Segment): segment =>
+              val eBikeId = EBikeId(segment)
+              concat(
+                (get & pathEnd):
+                  eBikesService.find(eBikeId) match
+                    case None        => complete(NotFound, "EBike not found")
+                    case Some(value) => complete(value)
+                ,
+                (patch & pathEnd):
+                  entity(as[UpdateEBikePhisicalDataDTO]): dto =>
+                    eBikesService.updatePhisicalData(
+                      eBikeId,
+                      dto.location,
+                      dto.direction,
+                      dto.speed
+                    ) match
+                      case None =>
+                        complete(NotFound, s"EBike $segment not found")
+                      case Some(eBike) => complete(eBike)
+              )
           )
         ,
         path("healthCheck"):

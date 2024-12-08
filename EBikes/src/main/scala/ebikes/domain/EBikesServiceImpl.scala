@@ -23,4 +23,17 @@ class EBikesServiceImpl(private val eBikesRepository: EBikesRepository)
   override def eBikes(): Iterable[EBike] =
     eBikesRepository.getAll()
 
+  override def updatePhisicalData(
+      eBikeId: EBikeId,
+      location: V2D,
+      direction: V2D,
+      speed: Double
+  ): Option[EBike] =
+    eBikesRepository
+      .update(
+        eBikeId,
+        _.copy(location = location, direction = direction, speed = speed)
+      )
+      .toOption
+
   def healthCheckError(): Option[String] = None
