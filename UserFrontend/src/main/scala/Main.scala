@@ -123,6 +123,7 @@ object SwingApp extends SimpleSwingApplication {
   // Home Window
   class HomeFrame(private val username: Username) extends Frame {
     private var credits: Option[Int] = None
+    private var availableEBikes: Seq[EBikeId] = Seq()
 
     title = "Home"
 
@@ -130,6 +131,8 @@ object SwingApp extends SimpleSwingApplication {
     val refreshButton = new Button("Refresh")
     val rechargeField = new TextField { columns = 10 }
     val rechargeButton = new Button("Recharge credit")
+    val bikesCombo = new ComboBox[String](Seq())
+    val rideButton = new Button("Start ride")
 
     contents = new BoxPanel(Orientation.Vertical) {
       contents += refreshButton
@@ -137,6 +140,11 @@ object SwingApp extends SimpleSwingApplication {
       contents += new BoxPanel(Orientation.Horizontal) {
         contents += rechargeField
         contents += rechargeButton
+      }
+      contents += new BoxPanel(Orientation.Horizontal) {
+        contents += new Label("Available EBikes")
+        contents += bikesCombo
+        contents += rideButton
       }
 
       border = Swing.EmptyBorder(10, 10, 10, 10)
@@ -161,6 +169,8 @@ object SwingApp extends SimpleSwingApplication {
                 rechargeButton.enabled = true
           case _ => Dialog.showMessage(this, "Invalid recharge amount.")
         }
+
+      case ButtonClicked(`rideButton`) => ???
     }
 
     updateUI()
@@ -169,6 +179,9 @@ object SwingApp extends SimpleSwingApplication {
     private def updateUI(): Unit =
       val credits = this.credits.map(_.toString()).getOrElse("???")
       creditsLabel.text = s"Credits: $credits"
+      bikesCombo.peer.setModel(
+        ComboBox.newConstantModel(availableEBikes.map(_.value))
+      )
 
     private def fetchData(): Unit =
       fetchCredits().map(res =>
@@ -176,6 +189,13 @@ object SwingApp extends SimpleSwingApplication {
           res match
             case Left(value) => Dialog.showMessage(this, value)
             case Right(c)    => this.credits = Some(c.amount)
+          updateUI()
+      )
+      fetchAvailableEBikes().map(res =>
+        onEDT:
+          res match
+            case Left(value)   => Dialog.showMessage(this, value)
+            case Right(eBikes) => this.availableEBikes = eBikes
           updateUI()
       )
 
@@ -219,5 +239,24 @@ object SwingApp extends SimpleSwingApplication {
             )
           yield (credit)
       yield (credit)
+
+    private def fetchAvailableEBikes(): Future[Either[String, Seq[EBikeId]]] =
+      for
+        res <- quickRequest
+          .get(
+            uri"http://localhost:8083/rides/availableEBikes"
+          ) // TODO: move to api gateway
+          .authorizationBearer(authToken.get)
+          .sendAsync()
+        eBikes =
+          for
+            res <- res
+            eBikes <- Either.cond(
+              res.isSuccess,
+              read[Seq[EBikeId]](res.body),
+              res.body
+            )
+          yield (eBikes)
+      yield (eBikes)
   }
 }
