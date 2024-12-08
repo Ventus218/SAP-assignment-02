@@ -154,10 +154,15 @@ object SwingApp extends SimpleSwingApplication {
       case ButtonClicked(`rechargeButton`) =>
         Try(rechargeField.text.toInt).filter(_ > 0) match {
           case scala.util.Success(amount) =>
-            // credits += amount
-            creditsLabel.text = s"Credits: $credits"
-            messageLabel.text = s"Successfully recharged $amount credits."
-            rechargeField.text = ""
+            rechargeButton.enabled = false
+            rechargeCredits(amount).map: res =>
+              onEDT:
+                res match
+                  case Left(value) => Dialog.showMessage(this, value)
+                  case Right(c) =>
+                    this.credits = Some(c.amount)
+                    updateUI()
+                rechargeButton.enabled = true
           case _ =>
             messageLabel.text =
               "Invalid recharge amount. Please enter a positive integer."
@@ -186,6 +191,28 @@ object SwingApp extends SimpleSwingApplication {
           .get(
             uri"http://localhost:8082/users/${username.value}/credit"
           ) // TODO: move to api gateway
+          .authorizationBearer(authToken.get)
+          .sendAsync()
+        credit =
+          for
+            res <- res
+            credit <- Either.cond(
+              res.isSuccess,
+              read[CreditDTO](res.body),
+              res.body
+            )
+          yield (credit)
+      yield (credit)
+
+    private def rechargeCredits(
+        amount: Int
+    ): Future[Either[String, CreditDTO]] =
+      for
+        res <- quickRequest
+          .post(
+            uri"http://localhost:8082/users/${username.value}/credit"
+          ) // TODO: move to api gateway
+          .jsonBody(CreditDTO(amount))
           .authorizationBearer(authToken.get)
           .sendAsync()
         credit =
