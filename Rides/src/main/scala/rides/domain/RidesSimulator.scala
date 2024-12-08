@@ -46,7 +46,8 @@ class RidesSimulator(
                 )
 
                 val newSpeed = Option
-                  .when(shouldChangeDirection)(0)
+                  .when(shouldChangeDirection)(0d)
+                  .orElse(Some(eBike.speed))
                   .map(s => Math.min(s + simulationPeriodSeconds * 1, 5))
 
                 sync(
