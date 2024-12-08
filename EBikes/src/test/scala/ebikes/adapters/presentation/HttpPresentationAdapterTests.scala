@@ -109,6 +109,22 @@ class HttpPresentationAdapterTests extends AnyFlatSpec:
             Right(bike)
           case Some(value) => Left(EBikeIdAlreadyInUse(id))
 
+      override def updatePhisicalData(
+          eBikeId: EBikeId,
+          location: Option[V2D],
+          direction: Option[V2D],
+          speed: Option[Double]
+      ): Option[EBike] =
+        bikes = bikes.collect({ case EBike(`eBikeId`, loc, dir, s) =>
+          EBike(
+            eBikeId,
+            location.getOrElse(loc),
+            direction.getOrElse(dir),
+            speed.getOrElse(s)
+          )
+        })
+        bikes.find(_.id == eBikeId)
+
       override def healthCheckError(): Option[String] = None
 
     val stubMetricsService = new MetricsService {
