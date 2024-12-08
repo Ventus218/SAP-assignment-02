@@ -22,8 +22,6 @@ object SwingApp extends SimpleSwingApplication {
     val passwordField = new PasswordField { columns = 15 }
     val loginButton = new Button("Login")
     val registerButton = new Button("Register")
-    val messageLabel = new Label("")
-    messageLabel.foreground = red
 
     contents = new BoxPanel(Orientation.Vertical) {
       contents += new BoxPanel(Orientation.Horizontal) {
@@ -34,7 +32,6 @@ object SwingApp extends SimpleSwingApplication {
         contents += new Label("Password:")
         contents += passwordField
       }
-      contents += messageLabel
       contents += new BoxPanel(Orientation.Horizontal) {
         contents += loginButton
         contents += registerButton
@@ -53,11 +50,11 @@ object SwingApp extends SimpleSwingApplication {
             token <- login(username, password)
             _ = onEDT:
               token match
-                case Left(error)  => messageLabel.text = error
+                case Left(error)  => Dialog.showMessage(this, error)
                 case Right(token) => openHomeWindow(Username(username))
           yield ()
         } else {
-          messageLabel.text = "Please enter valid credentials."
+          Dialog.showMessage(this, "Please enter valid credentials.")
         }
 
       case ButtonClicked(`registerButton`) =>
@@ -68,11 +65,11 @@ object SwingApp extends SimpleSwingApplication {
             token <- register(username, password)
             _ = onEDT:
               token match
-                case Left(error)  => messageLabel.text = error
+                case Left(error)  => Dialog.showMessage(this, error)
                 case Right(token) => openHomeWindow(Username(username))
           yield ()
         } else {
-          messageLabel.text = "Please enter valid credentials."
+          Dialog.showMessage(this, "Please enter valid credentials.")
         }
     }
 
@@ -133,7 +130,6 @@ object SwingApp extends SimpleSwingApplication {
     val refreshButton = new Button("Refresh")
     val rechargeField = new TextField { columns = 10 }
     val rechargeButton = new Button("Recharge credit")
-    val messageLabel = new Label("")
 
     contents = new BoxPanel(Orientation.Vertical) {
       contents += refreshButton
@@ -142,7 +138,7 @@ object SwingApp extends SimpleSwingApplication {
         contents += rechargeField
         contents += rechargeButton
       }
-      contents += messageLabel
+
       border = Swing.EmptyBorder(10, 10, 10, 10)
     }
 
@@ -163,9 +159,7 @@ object SwingApp extends SimpleSwingApplication {
                     this.credits = Some(c.amount)
                     updateUI()
                 rechargeButton.enabled = true
-          case _ =>
-            messageLabel.text =
-              "Invalid recharge amount. Please enter a positive integer."
+          case _ => Dialog.showMessage(this, "Invalid recharge amount.")
         }
     }
 
