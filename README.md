@@ -24,6 +24,18 @@ A zipped folder ``Assignment-02-<Surname>`` including a maven-based or gradle-ba
 **Deadline** 
 
 November 29, 2024 - 9:00 AM
+
+## Usage
+Running from the build tool (automatically assembles the jars):
+```sh
+sbt composeUpDev
+```
+
+Otherwise with the jars already built:
+```sh
+docker compose -f ./docker-compose.yml -f ./docker-compose.dev.yml --env-file ./development.env build
+docker compose -f ./docker-compose.yml -f ./docker-compose.dev.yml  --env-file ./development.env up --force-recreate
+```
  
 ## Requirements
 
