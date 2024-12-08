@@ -12,6 +12,9 @@ object Utils:
     def jsonBody[U: ReadWriter](body: U): Request[T] =
       r.body(write(body)).contentType(MediaType.ApplicationJson)
 
+    def authorizationBearer(token: String): Request[T] =
+      r.header("Authorization", s"Bearer $token")
+
     def sendAsync()(using
         ExecutionContext
     ): Future[Either[String, Response[T]]] =

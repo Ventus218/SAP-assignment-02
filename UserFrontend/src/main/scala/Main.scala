@@ -1,3 +1,4 @@
+import java.awt.Color.*
 import scala.concurrent.*
 import scala.util.Try
 import scala.swing._
@@ -11,10 +12,7 @@ import ExecutionContext.Implicits.global
 
 object SwingApp extends SimpleSwingApplication {
 
-  var token: Option[String] = None
-
-  // Shared state
-  var credits: Int = 0
+  var authToken: Option[String] = None
 
   // Login/Register Window
   def top: Frame = new MainFrame {
@@ -25,6 +23,7 @@ object SwingApp extends SimpleSwingApplication {
     val loginButton = new Button("Login")
     val registerButton = new Button("Register")
     val messageLabel = new Label("")
+    messageLabel.foreground = red
 
     contents = new BoxPanel(Orientation.Vertical) {
       contents += new BoxPanel(Orientation.Horizontal) {
@@ -55,7 +54,7 @@ object SwingApp extends SimpleSwingApplication {
             _ = onEDT:
               token match
                 case Left(error)  => messageLabel.text = error
-                case Right(token) => openHomeWindow()
+                case Right(token) => openHomeWindow(Username(username))
           yield ()
         } else {
           messageLabel.text = "Please enter valid credentials."
@@ -65,35 +64,80 @@ object SwingApp extends SimpleSwingApplication {
         val username = usernameField.text
         val password = passwordField.password.mkString
         if (username.nonEmpty && password.nonEmpty) {
-          messageLabel.text = "Registration successful!"
-          openHomeWindow()
+          for
+            token <- register(username, password)
+            _ = onEDT:
+              token match
+                case Left(error)  => messageLabel.text = error
+                case Right(token) => openHomeWindow(Username(username))
+          yield ()
         } else {
           messageLabel.text = "Please enter valid credentials."
         }
     }
 
-    def openHomeWindow(): Unit = {
-      val homeWindow = new HomeFrame
+    def openHomeWindow(username: Username): Unit = {
+      val homeWindow = new HomeFrame(username)
       homeWindow.visible = true
       this.close()
     }
+
+    private def login(
+        username: String,
+        password: String
+    ): Future[Either[String, String]] =
+      for
+        res <- quickRequest
+          .post(
+            uri"http://localhost:8080/authentication/$username/authenticate"
+          )
+          .jsonBody(AuthenticateDTO(password))
+          .sendAsync()
+        token =
+          for
+            res <- res
+            token <- Either.cond(res.isSuccess, res.body, res.body)
+            _ = authToken = Some(token)
+          // TODO: set timer for refresh
+          yield (token)
+      yield (token)
+
+    private def register(
+        username: String,
+        password: String
+    ): Future[Either[String, String]] =
+      for
+        res <- quickRequest
+          .post(
+            uri"http://localhost:8080/authentication/register"
+          )
+          .jsonBody(RegisterDTO(Username(username), password))
+          .sendAsync()
+        token =
+          for
+            res <- res
+            token <- Either.cond(res.isSuccess, res.body, res.body)
+            _ = authToken = Some(token)
+          // TODO: set timer for refresh
+          yield (token)
+      yield (token)
   }
 
   // Home Window
-  class HomeFrame extends Frame {
+  class HomeFrame(private val username: Username) extends Frame {
+    private var credits: Option[Int] = None
+
     title = "Home"
 
-    val creditsLabel = new Label(s"Credits: $credits")
+    val creditsLabel = new Label()
     val refreshButton = new Button("Refresh")
     val rechargeField = new TextField { columns = 10 }
     val rechargeButton = new Button("Recharge credit")
     val messageLabel = new Label("")
 
     contents = new BoxPanel(Orientation.Vertical) {
-      contents += new BoxPanel(Orientation.Horizontal) {
-        contents += creditsLabel
-        contents += refreshButton
-      }
+      contents += refreshButton
+      contents += creditsLabel
       contents += new BoxPanel(Orientation.Horizontal) {
         contents += rechargeField
         contents += rechargeButton
@@ -105,13 +149,12 @@ object SwingApp extends SimpleSwingApplication {
     listenTo(refreshButton, rechargeButton)
 
     reactions += {
-      case ButtonClicked(`refreshButton`) =>
-        creditsLabel.text = s"Credits: $credits"
+      case ButtonClicked(`refreshButton`) => fetchData()
 
       case ButtonClicked(`rechargeButton`) =>
         Try(rechargeField.text.toInt).filter(_ > 0) match {
           case scala.util.Success(amount) =>
-            credits += amount
+            // credits += amount
             creditsLabel.text = s"Credits: $credits"
             messageLabel.text = s"Successfully recharged $amount credits."
             rechargeField.text = ""
@@ -120,25 +163,40 @@ object SwingApp extends SimpleSwingApplication {
               "Invalid recharge amount. Please enter a positive integer."
         }
     }
-  }
 
-  private def login(
-      username: String,
-      password: String
-  ): Future[Either[String, String]] =
-    for
-      res <- quickRequest
-        .post(
-          uri"http://localhost:8080/authentication/$username/authenticate"
-        )
-        .jsonBody(AuthenticateDTO(password))
-        .sendAsync()
-      token =
-        for
-          res <- res
-          token <- Either.cond(res.isSuccess, res.body, res.body)
-          _ = this.token = Some(token)
-        // TODO: set timer for refresh
-        yield (token)
-    yield (token)
+    updateUI()
+    fetchData()
+
+    private def updateUI(): Unit =
+      val credits = this.credits.map(_.toString()).getOrElse("???")
+      creditsLabel.text = s"Credits: $credits"
+
+    private def fetchData(): Unit =
+      fetchCredits().map(res =>
+        onEDT:
+          res match
+            case Left(value) => Dialog.showMessage(this, value)
+            case Right(c)    => this.credits = Some(c.amount)
+          updateUI()
+      )
+
+    private def fetchCredits(): Future[Either[String, CreditDTO]] =
+      for
+        res <- quickRequest
+          .get(
+            uri"http://localhost:8082/users/${username.value}/credit"
+          ) // TODO: move to api gateway
+          .authorizationBearer(authToken.get)
+          .sendAsync()
+        credit =
+          for
+            res <- res
+            credit <- Either.cond(
+              res.isSuccess,
+              read[CreditDTO](res.body),
+              res.body
+            )
+          yield (credit)
+      yield (credit)
+  }
 }
