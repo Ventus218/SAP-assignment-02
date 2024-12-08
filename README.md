@@ -1,6 +1,38 @@
 # Assignment #02 - Software Architecture and Platforms - a.y. 2024-2025
 
-**Description** 
+- [Description](#description)
+- [Usage](#usage)
+- [Requirements](#requirements)
+  * [User Stories](#user-stories)
+  * [Use cases](#use-cases)
+    + [Scenarios](#scenarios)
+  * [Business requirements](#business-requirements)
+  * [Quality attribute scenarios](#quality-attribute-scenarios)
+- [Analisys](#analisys)
+  * [Bounded contexts](#bounded-contexts)
+  * [Ubiquitous language](#ubiquitous-language)
+- [Design](#design)
+  * [API Gateway](#api-gateway)
+    + [A choice regarding security](#a-choice-regarding-security)
+  * [EBikes and Users microservices](#ebikes-and-users-microservices)
+  * [Rides microservice](#rides-microservice)
+  * [Authentication microservice](#authentication-microservice)
+    + [Bounded context language](#bounded-context-language)
+    + [Register new user](#register-new-user)
+    + [Authenticate existing user](#authenticate-existing-user)
+    + [Validating a JTW token](#validating-a-jtw-token)
+    + [Refreshing JWT token](#refreshing-jwt-token)
+    + [Force authentication](#force-authentication)
+  * [Metrics microservice](#metrics-microservice)
+- [Deployment](#deployment)
+- [Fault tolerance / recovering](#fault-tolerance--recovering)
+- [Service discovery](#service-discovery)
+- [Configuration](#configuration)
+- [Testing](#testing)
+- [Issues](#issues)
+  * [Incompleteness](#incompleteness)
+
+## Description
 
 Consider the "EBike application" seen in the first assignment. The objective of the second assignment is to design and develop a distributed version based on microservices and microservices patterns - as discussed in modules 2.X and in Lab Notes about microservices patterns, and adopting DDD as reference method for the analysis and development stage.
 
