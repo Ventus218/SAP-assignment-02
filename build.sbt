@@ -54,6 +54,14 @@ lazy val commonFrontendSettings = Seq(
   libraryDependencies += "com.lihaoyi" %% "upickle" % "4.0.2"
 )
 
+lazy val sharedFrontend = project
+  .in(file("SharedFrontend"))
+  .settings(
+    name := "Shared Frontend",
+    version := "0.1.0",
+    commonFrontendSettings,
+  )
+
 lazy val userFrontend = project
   .in(file("UserFrontend"))
   .settings(
@@ -62,6 +70,7 @@ lazy val userFrontend = project
     commonFrontendSettings,
     assembly / assemblyOutputPath := file("./UserFrontend/executable.jar")
   )
+  .dependsOn(sharedFrontend)
 
 lazy val adminFrontend = project
   .in(file("AdminFrontend"))
@@ -71,6 +80,7 @@ lazy val adminFrontend = project
     commonFrontendSettings,
     assembly / assemblyOutputPath := file("./AdminFrontend/executable.jar")
   )
+  .dependsOn(sharedFrontend)
 
 lazy val shared = project
   .in(file("Shared"))

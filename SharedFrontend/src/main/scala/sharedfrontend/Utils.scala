@@ -1,3 +1,5 @@
+package sharedfrontend
+
 import scala.concurrent.Future
 import sttp.client4.*
 import upickle.default.*

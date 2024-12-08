@@ -1,4 +1,4 @@
-package dto;
+package sharedfrontend.dto;
 
 import upickle.default.*
 
