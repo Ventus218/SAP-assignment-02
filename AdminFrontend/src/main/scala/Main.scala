@@ -27,22 +27,16 @@ object SwingApp extends SimpleSwingApplication {
 
     title = "Home"
 
-    val refreshButton = new Button("Refresh")
     val textArea = new TextArea {
       editable = false
       preferredSize = new Dimension(400, 1000)
     }
 
     contents = new BoxPanel(Orientation.Vertical) {
-      contents += refreshButton
       contents += textArea
 
       border = Swing.EmptyBorder(10, 10, 10, 10)
     }
-
-    listenTo(refreshButton)
-
-    reactions += { case ButtonClicked(`refreshButton`) => fetchData() }
 
     updateUI()
     startPolling()
