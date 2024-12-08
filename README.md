@@ -248,9 +248,17 @@ It is required to provide at least one test for each layer in the testing pyrami
 <!-- TODO: add example tests references -->
 |Test type  |Amount     |Complexity |Examples   |
 |-----------|-----------|-----------|-----------|
-|End-to-end |Low        |Very high  ||
+|End-to-end |Low        |Very high  |End to end [tests](./postman-tests.json) were made manually through Postman|
 |Component  |Medium     |High       |[EBikesComponentTests](./EBikes/src/test/scala/ebikes/EBikesComponentTests.scala)|
 |Integration|High       |Medium     |[EBikesFileSystemRepositoryAdapterTests](./EBikes/src/test/scala/ebikes/adapters/persistence/EBikesFileSystemRepositoryAdapterTests.scala), [HttpPresentationAdapterTests](./EBikes/src/test/scala/ebikes/adapters/presentation/HttpPresentationAdapterTests.scala)|
 |Unit       |Very high  |Low        |[EBikesServiceTests](./EBikes/src/test/scala/ebikes/domain/EBikesServiceTests.scala), [V2DTests](./EBikes/src/test/scala/ebikes/domain/model/V2DTests.scala)|
 
-<!-- TODO talk about authorization issues -->
+## Issues
+
+### Incompleteness
+Due to time constraints the system lacks these features:
+- Differentiation between users and admins
+- Proper authorization checks
+- Incomplete API gateway (it only relays to EBikes and Authentication microservices)
+- The user credit is not decreased when riding
+- The GUI is really ugly

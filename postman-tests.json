@@ -1,0 +1,762 @@
+{
+	"info": {
+		"_postman_id": "1bbca316-de15-4f29-bd66-787ad032bc8c",
+		"name": "EBikesApp - Ass2",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "15236194"
+	},
+	"item": [
+		{
+			"name": "EBikes",
+			"item": [
+				{
+					"name": "/ebikes",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:{{ebikesPort}}/ebikes",
+							"host": [
+								"localhost"
+							],
+							"port": "{{ebikesPort}}",
+							"path": [
+								"ebikes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/ebikes",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": {\n        \"value\": \"bike\"\n    },\n    \"location\": {\n        \"x\": 0,\n        \"y\": 0\n    },\n    \"direction\": {\n        \"x\": 0,\n        \"y\": 0\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:{{ebikesPort}}/ebikes",
+							"host": [
+								"localhost"
+							],
+							"port": "{{ebikesPort}}",
+							"path": [
+								"ebikes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/ebikes/:id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:{{ebikesPort}}/ebikes/bike1",
+							"host": [
+								"localhost"
+							],
+							"port": "{{ebikesPort}}",
+							"path": [
+								"ebikes",
+								"bike1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "API Gateway",
+			"item": [
+				{
+					"name": "EBikes",
+					"item": [
+						{
+							"name": "/ebikes",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIxIiwiaWF0IjoxazMzNTk1NDk4LCJleHAiOjE3MzM1OTYzOTh9.ItwqdoI_KyoOAgoRUIlhRIG12QnaNz-Yun5MFxl9UZc",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:{{apigatewayPort}}/ebikes",
+									"host": [
+										"localhost"
+									],
+									"port": "{{apigatewayPort}}",
+									"path": [
+										"ebikes"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/ebikes",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"id\": {\n        \"value\": \"bike1\"\n    },\n    \"location\": {\n        \"x\": 0,\n        \"y\": 0\n    },\n    \"direction\": {\n        \"x\": 0,\n        \"y\": 0\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:{{apigatewayPort}}/ebikes",
+									"host": [
+										"localhost"
+									],
+									"port": "{{apigatewayPort}}",
+									"path": [
+										"ebikes"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/ebikes/:id",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:{{apigatewayPort}}/ebikes/bike1",
+									"host": [
+										"localhost"
+									],
+									"port": "{{apigatewayPort}}",
+									"path": [
+										"ebikes",
+										"bike1"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Authentication",
+					"item": [
+						{
+							"name": "/:username/authenticate",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"password\": \"passw\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:{{apigatewayPort}}/authentication/user1/authenticate",
+									"host": [
+										"localhost"
+									],
+									"port": "{{apigatewayPort}}",
+									"path": [
+										"authentication",
+										"user1",
+										"authenticate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/register",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"username\": {\n        \"value\": \"user1\"\n    },\n    \"password\": \"passw\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:{{apigatewayPort}}/authentication/register",
+									"host": [
+										"localhost"
+									],
+									"port": "{{apigatewayPort}}",
+									"path": [
+										"authentication",
+										"register"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/refresh",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImNpY2Npb2xvIiwiaWF0IjoxNzMzMjE1MTQ4LCJleHAiOjE3MzMyMTYwNDh9.SlQjPdT3F6aT-Quxc9w-02oEnc_H5RGxaiAkJ5mvvag",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "localhost:{{apigatewayPort}}/authentication/refresh",
+									"host": [
+										"localhost"
+									],
+									"port": "{{apigatewayPort}}",
+									"path": [
+										"authentication",
+										"refresh"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/:username/forceAuthentication",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImNpY2Npb2xvIiwiaWF0IjoxNzMzMTUyOTMyLCJleHAiOjE3MzMxNTI5NTJ9.KczonI_aG9OZVwZILkWevD98PsgLAAzOWkfvf-Erlk0",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "localhost:{{apigatewayPort}}/authentication/user1/forceAuthentication",
+									"host": [
+										"localhost"
+									],
+									"port": "{{apigatewayPort}}",
+									"path": [
+										"authentication",
+										"user1",
+										"forceAuthentication"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "/users",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:{{usersPort}}/users",
+							"host": [
+								"localhost"
+							],
+							"port": "{{usersPort}}",
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/users",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"value\": \"ciccio\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:{{usersPort}}/users",
+							"host": [
+								"localhost"
+							],
+							"port": "{{usersPort}}",
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/users/:id/credit",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:{{usersPort}}/users/user1/credit",
+							"host": [
+								"localhost"
+							],
+							"port": "{{usersPort}}",
+							"path": [
+								"users",
+								"user1",
+								"credit"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/users/:id/credit (recharge)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"amount\": 55\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:{{usersPort}}/users/ciccio/credit",
+							"host": [
+								"localhost"
+							],
+							"port": "{{usersPort}}",
+							"path": [
+								"users",
+								"ciccio",
+								"credit"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Rides",
+			"item": [
+				{
+					"name": "/rides/active",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:{{ridesPort}}/rides/active",
+							"host": [
+								"localhost"
+							],
+							"port": "{{ridesPort}}",
+							"path": [
+								"rides",
+								"active"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/rides/availableEBikes",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:{{ridesPort}}/rides/availableEBikes",
+							"host": [
+								"localhost"
+							],
+							"port": "{{ridesPort}}",
+							"path": [
+								"rides",
+								"availableEBikes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "End ride",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "localhost:{{ridesPort}}/rides/d5f7e087-4889-4548-a599-55134ea56004",
+							"host": [
+								"localhost"
+							],
+							"port": "{{ridesPort}}",
+							"path": [
+								"rides",
+								"d5f7e087-4889-4548-a599-55134ea56004"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Start ride",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": {\n        \"value\": \"user1\"\n    },\n    \"eBikeId\": {\n        \"value\": \"bike1\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:{{ridesPort}}/rides",
+							"host": [
+								"localhost"
+							],
+							"port": "{{ridesPort}}",
+							"path": [
+								"rides"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "/:username/authenticate",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"password\": \"passw\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:{{authenticationPort}}/authentication/user1/authenticate",
+							"host": [
+								"localhost"
+							],
+							"port": "{{authenticationPort}}",
+							"path": [
+								"authentication",
+								"user1",
+								"authenticate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": {\n        \"value\": \"user1\"\n    },\n    \"password\": \"passw\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:{{authenticationPort}}/authentication/register",
+							"host": [
+								"localhost"
+							],
+							"port": "{{authenticationPort}}",
+							"path": [
+								"authentication",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/validate",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImNpY2Npb2xvIiwiaWF0IjoxNzMzMjE2MjY4LCJleHAiOjE3MzMyMTYyOTh9.Byc-3LHBvEfVmPbifdPP5B9Lg2RZI9pH4_mEANZBKqI",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "localhost:{{authenticationPort}}/authentication/validate",
+							"host": [
+								"localhost"
+							],
+							"port": "{{authenticationPort}}",
+							"path": [
+								"authentication",
+								"validate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/refresh",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImNpY2Npb2xvIiwiaWF0IjoxNzMzMjE1MTQ4LCJleHAiOjE3MzMyMTYwNDh9.SlQjPdT3F6aT-Quxc9w-02oEnc_H5RGxaiAkJ5mvvag",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "localhost:{{authenticationPort}}/authentication/refresh",
+							"host": [
+								"localhost"
+							],
+							"port": "{{authenticationPort}}",
+							"path": [
+								"authentication",
+								"refresh"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/:username/forceAuthentication",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImNpY2Npb2xvIiwiaWF0IjoxNzMzMTUyOTMyLCJleHAiOjE3MzMxNTI5NTJ9.KczonI_aG9OZVwZILkWevD98PsgLAAzOWkfvf-Erlk0",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "localhost:{{authenticationPort}}/authentication/user1/forceAuthentication",
+							"host": [
+								"localhost"
+							],
+							"port": "{{authenticationPort}}",
+							"path": [
+								"authentication",
+								"user1",
+								"forceAuthentication"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Metrics",
+			"item": [
+				{
+					"name": "counters",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:{{metricsPort}}/metrics/counters",
+							"host": [
+								"localhost"
+							],
+							"port": "{{metricsPort}}",
+							"path": [
+								"metrics",
+								"counters"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "counters/c1",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:{{metricsPort}}/metrics/counters/apigateway_service_requests",
+							"host": [
+								"localhost"
+							],
+							"port": "{{metricsPort}}",
+							"path": [
+								"metrics",
+								"counters",
+								"apigateway_service_requests"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "counters/c1",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"value\": 3\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:{{metricsPort}}/metrics/counters/c1",
+							"host": [
+								"localhost"
+							],
+							"port": "{{metricsPort}}",
+							"path": [
+								"metrics",
+								"counters",
+								"c1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "endpoints",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:{{metricsPort}}/metrics/endpoints",
+							"host": [
+								"localhost"
+							],
+							"port": "{{metricsPort}}",
+							"path": [
+								"metrics",
+								"endpoints"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "endpoints",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"value\": \"ebikes:8080\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:{{metricsPort}}/metrics/endpoints",
+							"host": [
+								"localhost"
+							],
+							"port": "{{metricsPort}}",
+							"path": [
+								"metrics",
+								"endpoints"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "endpoints/ebikes:8080",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:{{metricsPort}}/metrics/endpoints/authentication:8080",
+							"host": [
+								"localhost"
+							],
+							"port": "{{metricsPort}}",
+							"path": [
+								"metrics",
+								"endpoints",
+								"authentication:8080"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "endpoints/ebikes:8080",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:{{metricsPort}}/metrics/endpoints/ebikes:8080",
+							"host": [
+								"localhost"
+							],
+							"port": "{{metricsPort}}",
+							"path": [
+								"metrics",
+								"endpoints",
+								"ebikes:8080"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
