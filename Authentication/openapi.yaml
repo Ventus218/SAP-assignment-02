@@ -1,0 +1,164 @@
+openapi: 3.0.3
+info:
+  title: Authentication Service API
+  version: 1.0.0
+  description: API for user registration, authentication, token management, and health checks.
+paths:
+  /authentication/register:
+    post:
+      description: Register a new user with a username and password.
+      requestBody:
+        description: The registration details.
+        required: true
+        content:
+          application/json:
+              schema:
+                $ref: '#/components/schemas/RegisterDTO'
+      responses:
+        '200':
+          description: User registered successfully.
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/JWT'
+        '409':
+          description: A user with the given username already exists.
+        '500':
+          description: Something went wrong.
+
+  /authentication/{username}/authenticate:
+    post:
+      description: Authenticate a user using their username and password.
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The username of the user.
+      requestBody:
+        description: The authentication details.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthenticateDTO'
+      responses:
+        '200':
+          description: User authenticated successfully.
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/JWT'
+        '404':
+          description: User not found.
+        '401':
+          description: Invalid credentials.
+
+  /authentication/refresh:
+    post:
+      description: Refresh an existing session using a valid token.
+      requestBody:
+        description: The bearer token from the Authorization header.
+        required: true
+        content:
+          text/plain:
+            schema:
+              type: string
+      responses:
+        '200':
+          description: Token refreshed successfully.
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/JWT'
+        '400':
+          description: Bad Authorization header format.
+        '401':
+          description: Session expired or invalid token.
+        '500':
+          description: Something went wrong.
+
+  /authentication/{username}/forceAuthentication:
+    post:
+      description: Force authenticate a user using a token and username.
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The username of the user.
+      requestBody:
+        description: The bearer token from the Authorization header.
+        required: true
+        content:
+          text/plain:
+            schema:
+              type: string
+              example: Bearer <JWT>
+      responses:
+        '200':
+          description: User authenticated successfully.
+        '404':
+          description: User not found.
+        '401':
+          description: Session expired or invalid token.
+        '500':
+          description: Something went wrong.
+
+  /authentication/validate:
+    get:
+      description: Validate a token to ensure it is still valid and has not expired.
+      responses:
+        '200':
+          description: Token is valid.
+          content:
+            application/json:
+              schema:
+                type: boolean
+                example: true
+        '401':
+          description: Token is invalid or session expired.
+
+  /healthCheck:
+    get:
+      description: Perform a health check to ensure the service is operational.
+      responses:
+        '200':
+          description: The service is healthy.
+        '503':
+          description: The service is unavailable.
+
+components:
+  schemas:
+    JWT:
+      type: string
+      description: A JWT.
+
+    Username:
+      type: object
+      description: A user username
+      properties:
+        value:
+          type: string
+      required:
+        - value
+
+    RegisterDTO:
+      type: object
+      description: Represents user registration details.
+      properties:
+        username:
+          $ref: '#/components/schemas/Username'
+        password:
+          type: string
+          description: The password of the user.
+
+    AuthenticateDTO:
+      type: object
+      description: Represents user authentication details.
+      properties:
+        password:
+          type: string
+          description: The password of the user.

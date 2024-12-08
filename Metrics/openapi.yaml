@@ -1,0 +1,150 @@
+openapi: 3.0.3
+info:
+  title: Metrics Service API
+  version: 1.0.0
+  description: API for managing and monitoring counters and endpoints.
+paths:
+  /metrics/counters/{counterId}:
+    get:
+      description: Retrieve the current value of a specific counter.
+      parameters:
+        - name: counterId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The unique identifier of the counter.
+      responses:
+        '200':
+          description: The current value of the counter.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LongDTO'
+
+    post:
+      description: Increment the value of a specific counter.
+      parameters:
+        - name: counterId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The unique identifier of the counter.
+      requestBody:
+        description: The amount by which to increment the counter.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LongDTO'
+      responses:
+        '200':
+          description: The counter was successfully incremented.
+
+  /metrics/endpoints:
+    post:
+      description: Start monitoring a specific endpoint.
+      requestBody:
+        description: The endpoint to start monitoring.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Endpoint'
+      responses:
+        '200':
+          description: The endpoint is now being monitored.
+
+  /metrics/endpoints/{endpoint}:
+    get:
+      description: Retrieve the status of a monitored endpoint.
+      parameters:
+        - name: endpoint
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The URI of the endpoint.
+      responses:
+        '200':
+          description: The status of the monitored endpoint.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MonitoredEndpointStatusDTO'
+        '404':
+          description: The endpoint is not under monitoring.
+          content:
+            text/plain:
+              schema:
+                type: string
+
+    delete:
+      description: Stop monitoring a specific endpoint.
+      parameters:
+        - name: endpoint
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The URI of the endpoint.
+      responses:
+        '200':
+          description: Monitoring for the endpoint was successfully stopped.
+        '404':
+          description: The endpoint is not under monitoring.
+          content:
+            text/plain:
+              schema:
+                type: string
+
+components:
+  schemas:
+    URI:
+      type: string
+      description: A Uniform Resource Identifier (URI).
+
+    CounterId:
+      type: object
+      description: Represents the unique identifier for a counter.
+      properties:
+        value:
+          type: string
+          description: The unique identifier of the counter.
+      required:
+        - value
+
+    LongDTO:
+      type: object
+      description: Represents a numeric value, such as a counter value or increment amount.
+      properties:
+        value:
+          type: number
+          description: The numeric value.
+      required:
+      - value
+
+    Endpoint:
+      type: object
+      description: Represents an endpoint to monitor.
+      properties:
+        value:
+          $ref: '#/components/schemas/URI'
+      required:
+        - value
+
+    MonitoredEndpointStatus:
+      type: string
+      description: The status of a monitored endpoint.
+      enum:
+        - UP
+        - DOWN
+        - UNKNOWN
+
+    MonitoredEndpointStatusDTO:
+      type: object
+      description: Represents the status of a monitored endpoint.
+      properties:
+        status:
+          $ref: '#/components/schemas/MonitoredEndpointStatus'
+      required:
+        - status
