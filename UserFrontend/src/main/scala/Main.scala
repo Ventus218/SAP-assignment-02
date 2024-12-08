@@ -1,8 +1,17 @@
-import scala.swing._
-import scala.swing.event._
+import scala.concurrent.*
 import scala.util.Try
+import scala.swing._
+import scala.swing.Swing.*
+import scala.swing.event._
+import sttp.client4.*
+import upickle.default.*
+import dto.*
+import Utils.*
+import ExecutionContext.Implicits.global
 
 object SwingApp extends SimpleSwingApplication {
+
+  var token: Option[String] = None
 
   // Shared state
   var credits: Int = 0
@@ -41,8 +50,13 @@ object SwingApp extends SimpleSwingApplication {
         val username = usernameField.text
         val password = passwordField.password.mkString
         if (username.nonEmpty && password.nonEmpty) {
-          messageLabel.text = "Login successful!"
-          openHomeWindow()
+          for
+            token <- login(username, password)
+            _ = onEDT:
+              token match
+                case Left(error)  => messageLabel.text = error
+                case Right(token) => openHomeWindow()
+          yield ()
         } else {
           messageLabel.text = "Please enter valid credentials."
         }
@@ -107,4 +121,24 @@ object SwingApp extends SimpleSwingApplication {
         }
     }
   }
+
+  private def login(
+      username: String,
+      password: String
+  ): Future[Either[String, String]] =
+    for
+      res <- quickRequest
+        .post(
+          uri"http://localhost:8080/authentication/$username/authenticate"
+        )
+        .jsonBody(AuthenticateDTO(password))
+        .sendAsync()
+      token =
+        for
+          res <- res
+          token <- Either.cond(res.isSuccess, res.body, res.body)
+          _ = this.token = Some(token)
+        // TODO: set timer for refresh
+        yield (token)
+    yield (token)
 }

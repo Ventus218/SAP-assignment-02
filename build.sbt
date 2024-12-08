@@ -48,22 +48,29 @@ lazy val springBootSettings = Seq(
   }
 )
 
+lazy val commonFrontendSettings = Seq(
+  libraryDependencies += "org.scala-lang.modules" %% "scala-swing" % "3.0.0",
+  libraryDependencies += "com.softwaremill.sttp.client4" %% "core" % "4.0.0-M19", // for sttp
+  libraryDependencies += "com.lihaoyi" %% "upickle" % "4.0.2"
+)
+
 lazy val userFrontend = project
   .in(file("UserFrontend"))
   .settings(
     name := "User Frontend",
     version := "0.1.0",
-    libraryDependencies += "org.scala-lang.modules" %% "scala-swing" % "3.0.0",
-    assembly / assemblyOutputPath := file("./ApiGateway/executable.jar")
+    commonFrontendSettings,
+    assembly / assemblyOutputPath := file("./UserFrontend/executable.jar")
   )
 
-// lazy val adminFrontend = project
-//   .in(file("AdminFrontend"))
-//   .settings(
-//     name := "Admin Frontend",
-//     version := "0.1.0",
-//     libraryDependencies += "org.scalameta" %% "munit" % "1.0.0" % Test
-//   )
+lazy val adminFrontend = project
+  .in(file("AdminFrontend"))
+  .settings(
+    name := "Admin Frontend",
+    version := "0.1.0",
+    commonFrontendSettings,
+    assembly / assemblyOutputPath := file("./AdminFrontend/executable.jar")
+  )
 
 lazy val shared = project
   .in(file("Shared"))
