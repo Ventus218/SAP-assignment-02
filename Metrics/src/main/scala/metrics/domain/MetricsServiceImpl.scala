@@ -79,6 +79,13 @@ class MetricsServiceImpl(
       .filter(_.timestamp <= atTimestamp)
       .foldLeft(0L)(_ + _.incrementAmount)
 
+  override def counters(atTimestamp: Long): Map[CounterId, Long] =
+    counterEventsRepo
+      .getAll()
+      .filter(_.timestamp <= atTimestamp)
+      .groupBy(_.counterId)
+      .map((id, values) => (id, values.foldLeft(0L)(_ + _.incrementAmount)))
+
   override def startMonitorEndpoint(
       endpoint: Endpoint
   ): Unit =

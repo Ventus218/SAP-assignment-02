@@ -10,6 +10,8 @@ trait MetricsService:
 
   def valueOfCounter(counterId: CounterId, atTimestamp: Long): Long
 
+  def counters(atTimestamp: Long): Map[CounterId, Long]
+
   def startMonitorEndpoint(endpoint: Endpoint): Unit
 
   def stopMonitorEndpoint(

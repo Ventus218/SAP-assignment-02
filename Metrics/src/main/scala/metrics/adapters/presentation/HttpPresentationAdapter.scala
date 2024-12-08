@@ -9,6 +9,7 @@ import akka.http.scaladsl.model.StatusCodes.*
 import akka.http.scaladsl.model.HttpEntity
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
+import spray.json.DefaultJsonProtocol.*
 import metrics.domain.model.*
 import metrics.ports.MetricsService
 import metrics.adapters.presentation.dto.*
@@ -24,21 +25,32 @@ object HttpPresentationAdapter:
     val route =
       pathPrefix("metrics"):
         concat(
-          path("counters" / Segment): segment =>
-            val counterId = CounterId(segment)
+          pathPrefix("counters"):
             concat(
-              get:
+              (get & pathEnd):
                 complete(
-                  LongDTO(
-                    metricsService
-                      .valueOfCounter(counterId, System.currentTimeMillis())
-                  )
+                  metricsService
+                    .counters(System.currentTimeMillis())
+                    .map((id, value) => CounterDTO(id, value))
+                    .toArray
                 )
               ,
-              post:
-                entity(as[LongDTO]): amount =>
-                  metricsService.incrementCounter(counterId, amount.value)
-                  complete(OK, HttpEntity.Empty)
+              path(Segment): segment =>
+                val counterId = CounterId(segment)
+                concat(
+                  get:
+                    complete(
+                      LongDTO(
+                        metricsService
+                          .valueOfCounter(counterId, System.currentTimeMillis())
+                      )
+                    )
+                  ,
+                  post:
+                    entity(as[LongDTO]): amount =>
+                      metricsService.incrementCounter(counterId, amount.value)
+                      complete(OK, HttpEntity.Empty)
+                )
             )
           ,
           pathPrefix("endpoints"):
@@ -88,6 +100,7 @@ private[presentation] object Marshalling:
     )
   given RootJsonFormat[CounterId] = jsonFormat1(CounterId.apply)
   given RootJsonFormat[EventId] = jsonFormat1(EventId.apply)
+  given RootJsonFormat[CounterDTO] = jsonFormat2(CounterDTO.apply)
   given RootJsonFormat[IncrementCounterEvent] = jsonFormat4(
     IncrementCounterEvent.apply
   )

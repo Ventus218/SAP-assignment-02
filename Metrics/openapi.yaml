@@ -4,6 +4,18 @@ info:
   version: 1.0.0
   description: API for managing and monitoring counters and endpoints.
 paths:
+  /metrics/counters:
+    get:
+      description: Retrieve every counter value
+      responses:
+        '200':
+          description: The counters.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CounterDTO'
   /metrics/counters/{counterId}:
     get:
       description: Retrieve the current value of a specific counter.
@@ -110,6 +122,17 @@ components:
         value:
           type: string
           description: The unique identifier of the counter.
+      required:
+        - value
+        
+    CounterDTO:
+      type: object
+      description: Represents a counte with its current value.
+      properties:
+        id:
+          $ref: '#/components/schemas/CounterId'
+        value:
+          type: number
       required:
         - value
 

@@ -3,6 +3,7 @@
 class MetricsService <<Service>> {
     incrementCounter(counterId: CounterId, amount: Long): Unit
     valueOfCounter(counterId: CounterId, atTimestamp: Long): Long
+    counters(atTimestamp: Long): Map<CounterId, Long>
     startMonitorEndpoint(endpoint: Endpoint): Unit
     stopMonitorEndpoint(endpoint: Endpoint): Either<MonitoredEndpointNotFound, Unit>
     monitoredEndpointStatus(endpoint: Endpoint): Either<MonitoredEndpointNotFound, MonitoredEndpointStatus>
