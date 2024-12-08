@@ -14,6 +14,8 @@ import rides.adapters.ebikesservice.EBikesServiceAdapter
 import rides.adapters.usersservice.UsersServiceAdapter
 import rides.adapters.persistence.RidesFileSystemRepositoryAdapter
 import shared.adapters.MetricsServiceAdapter
+import rides.domain.RidesSimulator
+import scala.concurrent.duration.FiniteDuration
 
 object Main extends App:
   given actorSystem: ActorSystem[Any] =
@@ -48,4 +50,8 @@ object Main extends App:
       metricsService.registerForHealthcheckMonitoring(
         sys.env.get("RIDES_SERVICE_ADDRESS").get
       )
+    )
+    .map(_ =>
+      RidesSimulator(ridesService, eBikesService, FiniteDuration(500, "ms"))
+        .start()
     )
