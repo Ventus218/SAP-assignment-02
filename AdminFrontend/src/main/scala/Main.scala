@@ -25,6 +25,7 @@ object SwingApp extends SimpleSwingApplication {
     private var users: Seq[User] = Seq()
     private var rides: Seq[Ride] = Seq()
     private var counters: Seq[CounterDTO] = Seq()
+    private var endpoints: Seq[MonitoredEndpointDTO] = Seq()
 
     title = "Home"
 
@@ -63,8 +64,13 @@ object SwingApp extends SimpleSwingApplication {
         name: ${c.id.value}
           value: ${c.value}
         """.strip() + "\n")
+      val endpointsText =
+        "Service health status:\n" + endpoints.foldLeft("")((s, e) => s + s"""
+        name: ${e.endpoint.value}
+          status: ${e.status}
+        """.strip() + "\n")
       textArea.text =
-        s"$eBikesText\n\n$usersText\n\n$ridesText\n\n\n\n$countersText"
+        s"$eBikesText\n$usersText\n$ridesText\n\n$countersText\n$endpointsText"
 
     private def fetchData(): Unit =
       fetchUsers().map(res =>
@@ -93,6 +99,13 @@ object SwingApp extends SimpleSwingApplication {
           res match
             case Left(value)     => Dialog.showMessage(this, value)
             case Right(counters) => this.counters = counters
+          updateUI()
+      )
+      fetchEndpoints().map(res =>
+        onEDT:
+          res match
+            case Left(value)      => Dialog.showMessage(this, value)
+            case Right(endpoints) => this.endpoints = endpoints
           updateUI()
       )
 
@@ -165,6 +178,25 @@ object SwingApp extends SimpleSwingApplication {
             )
           yield (counters)
       yield (counters)
+
+    private def fetchEndpoints()
+        : Future[Either[String, Seq[MonitoredEndpointDTO]]] =
+      for
+        res <- quickRequest
+          .get(uri"http://localhost:8085/metrics/endpoints")
+          .authorizationBearer(authToken.get)
+          .sendAsync()
+        endpoints =
+          for
+            res <- res
+            _ = println(res)
+            endpoints <- Either.cond(
+              res.isSuccess,
+              read[Seq[MonitoredEndpointDTO]](res.body),
+              res.body
+            )
+          yield (endpoints)
+      yield (endpoints)
 
     // POLLING
     given ExecutionContext = ExecutionContext.fromExecutor(

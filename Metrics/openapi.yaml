@@ -178,12 +178,12 @@ components:
       type: object
       description: Represents a monitored endpoint.
       properties:
-        id:
+        endpoint:
           $ref: '#/components/schemas/Endpoint'
         status:
           $ref: '#/components/schemas/MonitoredEndpointStatus'
       required:
-        - id
+        - endpoint
         - status
 
     MonitoredEndpointStatusDTO:
