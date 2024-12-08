@@ -18,7 +18,7 @@ trait EBikesService:
 
 object EBikesService:
   case class UpdateEBikePhisicalDataDTO(
-      location: V2D,
-      direction: V2D,
-      speed: Double
+      location: Option[V2D] = None,
+      direction: Option[V2D] = None,
+      speed: Option[Double] = None
   )

@@ -20,7 +20,7 @@ trait RidesService:
       username: Username
   ): Future[Either[StartRideError, Ride]]
 
-  def endRide(id: RideId): Either[RideNotFound, Ride]
+  def endRide(id: RideId): Future[Either[RideNotFound, Ride]]
 
   def availableEBikes(): Future[Iterable[EBikeId]]
 

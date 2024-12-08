@@ -3,7 +3,7 @@ package ebikes.adapters.presentation.dto
 import ebikes.domain.model.*
 
 final case class UpdateEBikePhisicalDataDTO(
-    location: V2D,
-    direction: V2D,
-    speed: Double
+    location: Option[V2D] = None,
+    direction: Option[V2D] = None,
+    speed: Option[Double] = None
 )

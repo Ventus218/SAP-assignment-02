@@ -25,14 +25,18 @@ class EBikesServiceImpl(private val eBikesRepository: EBikesRepository)
 
   override def updatePhisicalData(
       eBikeId: EBikeId,
-      location: V2D,
-      direction: V2D,
-      speed: Double
+      location: Option[V2D],
+      direction: Option[V2D],
+      speed: Option[Double]
   ): Option[EBike] =
     eBikesRepository
       .update(
         eBikeId,
-        _.copy(location = location, direction = direction, speed = speed)
+        eBike =>
+          val newLocation = location.getOrElse(eBike.location)
+          val newDirection = direction.getOrElse(eBike.direction)
+          val newSpeed = speed.getOrElse(eBike.speed)
+          eBike.copy(eBikeId, newLocation, newDirection, newSpeed)
       )
       .toOption
 

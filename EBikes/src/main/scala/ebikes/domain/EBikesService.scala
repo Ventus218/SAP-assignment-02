@@ -17,9 +17,9 @@ trait EBikesService:
 
   def updatePhisicalData(
       eBikeId: EBikeId,
-      location: V2D,
-      direction: V2D,
-      speed: Double
+      location: Option[V2D],
+      direction: Option[V2D],
+      speed: Option[Double]
   ): Option[EBike]
 
   def healthCheckError(): Option[String]

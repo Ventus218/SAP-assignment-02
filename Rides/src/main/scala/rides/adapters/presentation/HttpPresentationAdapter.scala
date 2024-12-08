@@ -86,9 +86,10 @@ object HttpPresentationAdapter:
                     case Some(value) => complete(value)
                 ,
                 (put & pathEnd):
-                  ridesService.endRide(RideId(rideId)) match
-                    case Left(value)  => complete(NotFound, "Ride not found")
-                    case Right(value) => complete(value)
+                  onSuccess(ridesService.endRide(RideId(rideId))):
+                    _ match
+                      case Left(value)  => complete(NotFound, "Ride not found")
+                      case Right(value) => complete(value)
               )
           )
         ,

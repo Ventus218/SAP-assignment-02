@@ -9,6 +9,7 @@ import rides.domain.errors.UserOrEBikeDoesNotExist.*
 import rides.ports.persistence.RidesRepository
 import rides.ports.*
 import rides.domain.errors.UserOrEBikeAlreadyOnARide.EBikeAlreadyOnARide
+import rides.ports.EBikesService.UpdateEBikePhisicalDataDTO
 
 class RidesServiceImpl(
     private val ridesRepository: RidesRepository,
@@ -75,14 +76,19 @@ class RidesServiceImpl(
         Left(FailureInOtherService())
       })
 
-  def endRide(id: RideId): Either[RideNotFound, Ride] =
+  def endRide(id: RideId): Future[Either[RideNotFound, Ride]] =
     transaction:
       ridesRepository.update(
         id,
         r => r.copy(end = r.end.orElse(Some(Date())))
       ) match
-        case Left(value)  => Left(RideNotFound(id))
-        case Right(value) => Right(value)
+        case Left(value) => Future(Left(RideNotFound(id)))
+        case Right(ride) =>
+          for _ <- eBikesService.updatePhisicalData(
+              ride.eBikeId,
+              UpdateEBikePhisicalDataDTO(speed = Some(0))
+            )
+          yield (Right(ride))
 
   def availableEBikes(): Future[Iterable[EBikeId]] =
     transaction:
