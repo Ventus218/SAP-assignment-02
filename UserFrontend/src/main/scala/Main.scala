@@ -128,7 +128,7 @@ object SwingApp extends SimpleSwingApplication {
           updateUI()
       )
 
-    private def fetchCredits(): Future[Either[String, CreditDTO]] =
+    private def fetchCredits(): Future[Either[String, Credit]] =
       for
         res <- quickRequest
           .get(
@@ -141,7 +141,7 @@ object SwingApp extends SimpleSwingApplication {
             res <- res
             credit <- Either.cond(
               res.isSuccess,
-              read[CreditDTO](res.body),
+              read[Credit](res.body),
               res.body
             )
           yield (credit)
@@ -149,13 +149,13 @@ object SwingApp extends SimpleSwingApplication {
 
     private def rechargeCredits(
         amount: Int
-    ): Future[Either[String, CreditDTO]] =
+    ): Future[Either[String, Credit]] =
       for
         res <- quickRequest
           .post(
             uri"http://localhost:8082/users/${username.value}/credit"
           ) // TODO: move to api gateway
-          .jsonBody(CreditDTO(amount))
+          .jsonBody(Credit(amount))
           .authorizationBearer(authToken.get)
           .sendAsync()
         credit =
@@ -163,7 +163,7 @@ object SwingApp extends SimpleSwingApplication {
             res <- res
             credit <- Either.cond(
               res.isSuccess,
-              read[CreditDTO](res.body),
+              read[Credit](res.body),
               res.body
             )
           yield (credit)
