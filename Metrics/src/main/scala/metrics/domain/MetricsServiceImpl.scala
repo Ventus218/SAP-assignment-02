@@ -101,6 +101,9 @@ class MetricsServiceImpl(
       case Left(_)  => Left(MonitoredEndpointNotFound(endpoint))
       case Right(_) => Right(())
 
+  override def monitoredEndpoints(): Iterable[MonitoredEndpoint] =
+    endpointsRepo.getAll()
+
   override def monitoredEndpointStatus(
       endpoint: Endpoint
   ): Either[MonitoredEndpointNotFound, MonitoredEndpointStatus] =

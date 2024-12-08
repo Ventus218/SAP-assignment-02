@@ -55,7 +55,10 @@ object HttpPresentationAdapter:
           ,
           pathPrefix("endpoints"):
             concat(
-              post:
+              (get & pathEnd):
+                complete(metricsService.monitoredEndpoints().toArray)
+              ,
+              (post & pathEnd):
                 entity(as[Endpoint]): endpoint =>
                   metricsService.startMonitorEndpoint(endpoint)
                   complete(OK, HttpEntity.Empty)
@@ -109,3 +112,4 @@ private[presentation] object Marshalling:
   given RootJsonFormat[MonitoredEndpointStatusDTO] = jsonFormat1(
     MonitoredEndpointStatusDTO.apply
   )
+  given RootJsonFormat[MonitoredEndpoint] = jsonFormat2(MonitoredEndpoint.apply)

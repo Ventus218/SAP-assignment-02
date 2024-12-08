@@ -54,6 +54,16 @@ paths:
           description: The counter was successfully incremented.
 
   /metrics/endpoints:
+    get:
+      description: Check the status of every monitored endpoint.
+      responses:
+        '200':
+          description: All the monitored endpoints.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MonitoredEndpointDTO'
+
     post:
       description: Start monitoring a specific endpoint.
       requestBody:
@@ -134,6 +144,7 @@ components:
         value:
           type: number
       required:
+        - id
         - value
 
     LongDTO:
@@ -162,6 +173,18 @@ components:
         - UP
         - DOWN
         - UNKNOWN
+
+    MonitoredEndpointDTO:
+      type: object
+      description: Represents a monitored endpoint.
+      properties:
+        id:
+          $ref: '#/components/schemas/Endpoint'
+        status:
+          $ref: '#/components/schemas/MonitoredEndpointStatus'
+      required:
+        - id
+        - status
 
     MonitoredEndpointStatusDTO:
       type: object

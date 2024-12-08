@@ -6,6 +6,7 @@ class MetricsService <<Service>> {
     counters(atTimestamp: Long): Map<CounterId, Long>
     startMonitorEndpoint(endpoint: Endpoint): Unit
     stopMonitorEndpoint(endpoint: Endpoint): Either<MonitoredEndpointNotFound, Unit>
+    def monitoredEndpoints(): Iterable<MonitoredEndpoint>
     monitoredEndpointStatus(endpoint: Endpoint): Either<MonitoredEndpointNotFound, MonitoredEndpointStatus>
 }
 

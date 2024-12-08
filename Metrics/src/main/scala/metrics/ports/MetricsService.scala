@@ -18,6 +18,8 @@ trait MetricsService:
       endpoint: Endpoint
   ): Either[MonitoredEndpointNotFound, Unit]
 
+  def monitoredEndpoints(): Iterable[MonitoredEndpoint]
+
   def monitoredEndpointStatus(
       endpoint: Endpoint
   ): Either[MonitoredEndpointNotFound, MonitoredEndpointStatus]
