@@ -68,6 +68,11 @@ Otherwise with the jars already built:
 docker compose -f ./docker-compose.yml -f ./docker-compose.dev.yml --env-file ./development.env build
 docker compose -f ./docker-compose.yml -f ./docker-compose.dev.yml  --env-file ./development.env up --force-recreate
 ```
+
+Otherwise you can pull the images from dockerhub:
+```sh
+docker compose -f ./docker-compose.yml -f ./docker-compose.dev.yml -f ./docker-compose.hub.yml --env-file ./development.env up --force-recreate
+```
  
 ## Requirements
 
@@ -306,3 +311,23 @@ Due to time constraints the system lacks these features:
 - Incomplete API gateway (it only relays to EBikes and Authentication microservices)
 - The user credit is not decreased when riding
 - The GUI is really ugly
+- The admin interface is missing the ability to register a new bike
+  
+  In order to register a bike to test the system you can run
+  ```sh
+  curl --location 'localhost:8081/ebikes' \
+  --header 'Content-Type: application/json' \
+  --data '{
+      "id": {
+          "value": "bike1"
+      },
+      "location": {
+          "x": 0,
+          "y": 0
+      },
+      "direction": {
+          "x": 0,
+          "y": 0
+      }
+  }'
+  ```
