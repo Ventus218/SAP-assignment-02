@@ -125,11 +125,11 @@ components:
       type: object
       description: Represents a user's credit balance.
       properties:
-        value:
+        amount:
           type: number
           description: The amount of credit.
       required:
-        - value
+        - amount
 
     User:
       type: object
