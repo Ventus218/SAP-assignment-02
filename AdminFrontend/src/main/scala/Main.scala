@@ -24,6 +24,7 @@ object SwingApp extends SimpleSwingApplication {
     private var eBikes: Seq[EBike] = Seq()
     private var users: Seq[User] = Seq()
     private var rides: Seq[Ride] = Seq()
+    private var counters: Seq[CounterDTO] = Seq()
 
     title = "Home"
 
@@ -57,7 +58,13 @@ object SwingApp extends SimpleSwingApplication {
           username: ${r.username.value}
           eBike: ${r.eBikeId.value}
         """.strip() + "\n")
-      textArea.text = s"$eBikesText\n\n$usersText\n\n$ridesText"
+      val countersText =
+        "Metrics:\n" + counters.foldLeft("")((s, c) => s + s"""
+        name: ${c.id.value}
+          value: ${c.value}
+        """.strip() + "\n")
+      textArea.text =
+        s"$eBikesText\n\n$usersText\n\n$ridesText\n\n\n\n$countersText"
 
     private def fetchData(): Unit =
       fetchUsers().map(res =>
@@ -79,6 +86,13 @@ object SwingApp extends SimpleSwingApplication {
           res match
             case Left(value)  => Dialog.showMessage(this, value)
             case Right(rides) => this.rides = rides
+          updateUI()
+      )
+      fetchCounters().map(res =>
+        onEDT:
+          res match
+            case Left(value)     => Dialog.showMessage(this, value)
+            case Right(counters) => this.counters = counters
           updateUI()
       )
 
@@ -134,6 +148,23 @@ object SwingApp extends SimpleSwingApplication {
             )
           yield (rides)
       yield (rides)
+
+    private def fetchCounters(): Future[Either[String, Seq[CounterDTO]]] =
+      for
+        res <- quickRequest
+          .get(uri"http://localhost:8085/metrics/counters")
+          .authorizationBearer(authToken.get)
+          .sendAsync()
+        counters =
+          for
+            res <- res
+            counters <- Either.cond(
+              res.isSuccess,
+              read[Seq[CounterDTO]](res.body),
+              res.body
+            )
+          yield (counters)
+      yield (counters)
 
     // POLLING
     given ExecutionContext = ExecutionContext.fromExecutor(
