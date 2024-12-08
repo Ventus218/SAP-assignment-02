@@ -1,0 +1,18 @@
+services:
+  api-gateway:
+    image: ventus218/sap-assignment-02-api-gateway
+
+  ebikes:
+    image: ventus218/sap-assignment-02-ebikes
+
+  users:
+    image: ventus218/sap-assignment-02-users
+
+  rides:
+    image: ventus218/sap-assignment-02-rides
+
+  authentication:
+    image: ventus218/sap-assignment-02-authentication
+
+  metrics:
+    image: ventus218/sap-assignment-02-metrics
